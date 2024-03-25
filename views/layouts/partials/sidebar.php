@@ -161,6 +161,12 @@ use luc\tourist\Tourist;
                 <li class="<?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?> <?=$adminvisibility?> <?=$customercarevisibility?>">
                     <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Disbursements', Url::to(['/disbursements/index']), ['class' => '', 'id' => 'appmenu'])?>
                 </li>
+                <li class="<?= in_array( Yii::$app->user->identity->email, Yii::$app->myhelper->getMembers( array( '' ), array(44) ) ) ? '':'hidden'?> ">
+                    <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Danadana Disbursements', Url::to(['/danadanadisbursement/index']), ['class' => '', 'id' => 'appmenu'])?>
+                </li>
+                <li class="<?= in_array( Yii::$app->user->identity->email, Yii::$app->myhelper->getMembers( array( '' ), array(44) ) ) ? '':'hidden'?> ">
+                    <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Danadana Collection', Url::to(['/danadanacollection/index']), ['class' => '', 'id' => 'appmenu'])?>
+                </li>
                 <li class="<?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?> <?=$adminvisibility?> <?=$customercarevisibility?>">
                     <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Station Target Report', Url::to(['/stationtarget/report']), ['class' => '', 'id' => 'appmenu'])?>
                 </li>
