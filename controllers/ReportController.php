@@ -1128,6 +1128,70 @@ class ReportController extends Controller{
         return ob_get_clean();
 
     }
+    public function actionStake()
+    {
+        $filename=MAIN_DB."-stakes-".date("Y-m-d-His").".csv";
+        header( 'Content-Type: text/csv; charset=utf-8' );
+        header( 'Content-Disposition: attachment; filename='.$filename );
+        $sql="select a.id,a.reference_phone,a.reference_code,b.name as station_name,c.name as station_show,a.amount,a.created_at from transaction_histories a left join stations b on a.station_id=b.id left join station_shows c 
+        on a.station_show_id=c.id";
+        $data=Myhelper::getAll($sql);
+        $analytics_sql = "select a.id,a.reference_phone,a.reference_code,b.name as station_name,c.name as station_show,a.amount,a.created_at from transaction_histories a left join stations b on a.station_id=b.id left join station_shows c 
+        on a.station_show_id=c.id";
+        $analytics_data = Yii::$app->analytics_db->createCommand($analytics_sql)->queryAll();
+        $mergedData = array_merge($data, $analytics_data);
+        // $unique_merged_data = array_map("unserialize", array_unique(array_map("serialize", $mergedData)));
+        $titles=['id','reference_phone','reference_code','station_name','station_show','amount','created_at'];
+        $output = fopen( 'php://output', 'w' );
+        ob_start();
+        fputcsv( $output,$titles);
+        foreach ($mergedData as $row) {
+            fputcsv($output, $row);
+        }
+         Yii::$app->end();
+         ob_get_clean();
+
+    }  
+    public function actionShows()
+    {
+        $filename=MAIN_DB."-shows-".date("Y-m-d-His").".csv";
+        $sql='select a.name as station_name,b.name as show_name,b.start_time,b.end_time,b.monday,b.tuesday,b.wednesday,b.thursday,
+        b.friday,b.saturday,b.sunday,(select GROUP_CONCAT(CONCAT(j.first_name," ",j.last_name)) from users j left join station_show_presenters k
+        on j.id=k.presenter_id where station_show_id=b.id) as presenters from stations a left join station_shows b on a.id=b.station_id';
+        $data=Myhelper::getAll($sql);
+        $titles=['station_name','show_name','start_time','end_time','monday','tuesday','wednesday','thursday','friday','saturday','sunday','presenters'];
+        header( 'Content-Type: text/csv; charset=utf-8' );
+        header( 'Content-Disposition: attachment; filename='.$filename );
+        $output = fopen( 'php://output', 'w' );
+        ob_start();
+        fputcsv( $output,$titles);
+        foreach($data as $row)
+        {
+            fputcsv( $output,$row);
+        }
+        Yii::$app->end();
+        ob_get_clean();
+    }
+    public function actionWinner()
+    {
+        $filename=MAIN_DB."-winners-".date("Y-m-d-His").".csv";
+        $sql='select b.name as station_name,c.name as show_name,a.reference_phone,a.reference_code,a.amount,a.created_at,CONCAT(d.first_name," ",d.last_name) as presenter_name from winning_histories a 
+        left join stations b on a.station_id=b.id left join station_shows c on a.station_show_id=c.id 
+        left join users d on a.presenter_id=d.id';
+        $data=Myhelper::getAll($sql);
+        $titles=['station_name','show_name','reference_phone','reference_code','amount','created_at','presenter_name'];
+        header( 'Content-Type: text/csv; charset=utf-8' );
+        header( 'Content-Disposition: attachment; filename='.$filename );
+        $output = fopen( 'php://output', 'w' );
+        ob_start();
+        fputcsv( $output,$titles);
+        foreach($data as $row)
+        {
+            fputcsv( $output,$row);
+        }
+        Yii::$app->end();
+        ob_get_clean();
+    } 
 
 }
 ?>
