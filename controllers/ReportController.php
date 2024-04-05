@@ -1130,6 +1130,8 @@ class ReportController extends Controller{
     }
     public function actionStake()
     {
+        ini_set('memory_limit', '1024M');
+        
         $filename=MAIN_DB."-stakes-".date("Y-m-d-His").".csv";
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename='.$filename );
