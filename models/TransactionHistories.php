@@ -396,7 +396,7 @@ class TransactionHistories extends \yii\db\ActiveRecord
             }
             //$totalEntry=Customer::customerTicket($row->MSISDN);
             //$entryNumber=TransactionHistories::generateEntryNumber($row->MSISDN,$totalEntry);
-            if(Myhelper::compareCode($row->BillRefNumber,'YANGA/111')){
+            if($station_id = 'f50262b0-e4c3-11ed-a1ec-1972e3e43059' && Myhelper::compareCode($row->BillRefNumber,'YANGA/111')){
                 Myhelper::setSms('yangaDraw',$row->MSISDN,[],SENDER_NAME,$station_id);
             }else {
                 Myhelper::setSms('validDrawEntry',$row->MSISDN,['Habari',rand(0,999999)],SENDER_NAME,$station_id);
