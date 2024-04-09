@@ -5,6 +5,8 @@ use app\components\AwardsJob;
 use app\components\LastHourJob;
 use app\components\LogCommissionJob;
 use app\components\LogLoserJob;
+use Exception;
+use Throwable;
 use Yii;
 use app\models\MpesaPayments;
 use app\models\TransactionHistories;
@@ -1130,26 +1132,31 @@ class ReportController extends Controller{
     }
     public function actionStake()
     {
-        $filename=MAIN_DB."-stakes-".date("Y-m-d-His").".csv";
-        header( 'Content-Type: text/csv; charset=utf-8' );
-        header( 'Content-Disposition: attachment; filename='.$filename );
-        $sql="select a.id,a.reference_phone,a.reference_code,b.name as station_name,c.name as station_show,a.amount,a.created_at from transaction_histories a left join stations b on a.station_id=b.id left join station_shows c 
-        on a.station_show_id=c.id";
-        $data=Myhelper::getAll($sql);
-        $analytics_sql = "select a.id,a.reference_phone,a.reference_code,b.name as station_name,c.name as station_show,a.amount,a.created_at from transaction_histories a left join stations b on a.station_id=b.id left join station_shows c 
-        on a.station_show_id=c.id";
-        $analytics_data = Yii::$app->analytics_db->createCommand($analytics_sql)->queryAll();
-        $mergedData = array_merge($data, $analytics_data);
-        // $unique_merged_data = array_map("unserialize", array_unique(array_map("serialize", $mergedData)));
-        $titles=['id','reference_phone','reference_code','station_name','station_show','amount','created_at'];
-        $output = fopen( 'php://output', 'w' );
-        ob_start();
-        fputcsv( $output,$titles);
-        foreach ($mergedData as $row) {
-            fputcsv($output, $row);
+        try{
+            $filename=MAIN_DB."-stakes-".date("Y-m-d-His").".csv";
+            header( 'Content-Type: text/csv; charset=utf-8' );
+            header( 'Content-Disposition: attachment; filename='.$filename );
+            $sql="select a.id,a.reference_phone,a.reference_code,b.name as station_name,c.name as station_show,a.amount,a.created_at from transaction_histories a left join stations b on a.station_id=b.id left join station_shows c 
+            on a.station_show_id=c.id";
+            $data=Myhelper::getAll($sql);
+            $analytics_sql = "select a.id,a.reference_phone,a.reference_code,b.name as station_name,c.name as station_show,a.amount,a.created_at from transaction_histories a left join stations b on a.station_id=b.id left join station_shows c 
+            on a.station_show_id=c.id";
+            $analytics_data = Yii::$app->analytics_db->createCommand($analytics_sql)->queryAll();
+            $mergedData = array_merge($data, $analytics_data);
+            // $unique_merged_data = array_map("unserialize", array_unique(array_map("serialize", $mergedData)));
+            $titles=['id','reference_phone','reference_code','station_name','station_show','amount','created_at'];
+            $output = fopen( 'php://output', 'w' );
+            ob_start();
+            fputcsv( $output,$titles);
+            foreach ($mergedData as $row) {
+                fputcsv($output, $row);
+            }
+            Yii::$app->end();
+            ob_get_clean();
+
+        }catch(Throwable $th){
+            var_dump($th);
         }
-         Yii::$app->end();
-         ob_get_clean();
 
     }  
     public function actionShows()
