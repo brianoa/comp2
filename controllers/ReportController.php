@@ -42,7 +42,7 @@ class ReportController extends Controller{
         return [
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['hourlyperformance','exporthourlyperformance', 'presentercommission','dailyawarding','exportdailyawarding','revenue','revenueexport','exportcommissionsummary','commissionsummary','showsummary','exportshowsummary','customerreport','exportpayouts','loserpayout','growthtrend','playercurrent','playerarchive','station','backlog','updateshow'],
+                'only' => ['hourlyperformance','exporthourlyperformance', 'presentercommission','dailyawarding','exportdailyawarding','revenue','revenueexport','exportcommissionsummary','commissionsummary','showsummary','exportshowsummary','customerreport','exportpayouts','loserpayout','growthtrend','playercurrent','playerarchive','station','backlog','updateshow','stake','shows','winner'],
                 'rules' => [
                     [
                         'actions' => ['hourlyperformance','exporthourlyperformance','customerreport','payouts','exportpayouts','growthtrend','station','backlog','updateshow'],
@@ -105,7 +105,7 @@ class ReportController extends Controller{
                         }
                     ],
                     [
-                        'actions' => ['showsummary','exportshowsummary'],
+                        'actions' => ['showsummary','exportshowsummary','stake','shows','winner'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             if ( ! Yii::$app->user->isGuest ) {
