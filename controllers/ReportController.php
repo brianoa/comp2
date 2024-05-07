@@ -924,9 +924,9 @@ class ReportController extends Controller{
     }
 
     //removed action
-    public function actionPlayercurrent()
+    public function actionPlayercurrent($start_date, $end_date)
     {
-        $this->playerDataCurrent();
+        $this->playerDataCurrent($start_date, $end_date);
 
     }
     public function actionPlayerarchive()
@@ -965,14 +965,14 @@ class ReportController extends Controller{
         Yii::$app->end();
         return ob_get_clean();
     }
-    private function playerDataCurrent()
+    private function playerDataCurrent($start_date,$end_date)
     {
        /* $archive=[];
         $current=[];
         $archive=ArchivedTransactionHistories::getUniquePlayers();
         $current=TransactionHistories::getUniquePlayers();
         TransactionHistories::merge($archive,$current);*/
-        $current=TransactionHistories::getUniquePlayers();
+        $current=TransactionHistories::getUniquePlayers($start_date,$end_date);
         $filename=SENDER_NAME."current".".csv";
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename='.$filename );
