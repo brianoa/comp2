@@ -396,18 +396,24 @@ class TransactionHistories extends \yii\db\ActiveRecord
             }
             //$totalEntry=Customer::customerTicket($row->MSISDN);
             //$entryNumber=TransactionHistories::generateEntryNumber($row->MSISDN,$totalEntry);
-            if($station_id = 'f50262b0-e4c3-11ed-a1ec-1972e3e43059' && Myhelper::compareCode($row->BillRefNumber,'YANGA/111')){
+            if($station_id == 'f50262b0-e4c3-11ed-a1ec-1972e3e43059' && Myhelper::compareCode($row->BillRefNumber,'YANGA/111')){
                 Myhelper::setSms('yangaDraw',$row->MSISDN,[],SENDER_NAME,$station_id);
-            }if($station_id = '0afb29d0-021e-11ef-8ae4-53a0b7361a5b'){
-                Myhelper::setSms('881/EBONY',$row->MSISDN,['MKWANJA FASTA',rand(0,999999)],SENDER_NAME,$station_id);
-            } if($station_id = '5b391cd0-92e3-11ec-b55f-9d46adbdc48d'){
-                Myhelper::setSms('Noti/883',$row->MSISDN,['KAMATA MPUNGA',rand(0,999999)],SENDER_NAME,$station_id);
-            } if($station_id = 'aef96b80-021a-11ef-a72a-41894b4c89f5'){
-                Myhelper::setSms('BONGO/333',$row->MSISDN,['CHEZAPESA',rand(0,999999)],SENDER_NAME,$station_id);
-            }
-            else {
-                Myhelper::setSms('validDrawEntry',$row->MSISDN,['Habari',rand(0,999999)],SENDER_NAME,$station_id);
-            }
+            }else {                
+                switch ($station_id) {
+                    case '5b391cd0-92e3-11ec-b55f-9d46adbdc48d	':
+                        Myhelper::setSms('Noti/883', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        break;
+                    case '0afb29d0-021e-11ef-8ae4-53a0b7361a5b':
+                        Myhelper::setSms('881/EBONY', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        break;
+                    case 'aef96b80-021a-11ef-a72a-41894b4c89f5':
+                        Myhelper::setSms('BONGO/333', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        break;
+                    default:
+                        Myhelper::setSms('validDrawEntry', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        break;
+                }
+            }        
             $row->operator=Myhelper::getOperator($row->MSISDN);
             $row->state=1;
             $row->save(false);

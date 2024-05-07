@@ -881,18 +881,18 @@ class Myhelper extends Component {
 						$toreplace       = [];
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
 						break;
-						case '881/EBONY':
-							$toreplace       =["[customer_name]","[entryNumber]"];
-							$data['message'] = str_replace( $toreplace, $variables, $temp );
-							break;
-					case 'Noti/883':
-							$toreplace       = ["[customer_name]","[entryNumber]"];
-							$data['message'] = str_replace( $toreplace, $variables, $temp );
-							break;
-					case 'BONGO/333':
+				case '881/EBONY':
+						$toreplace       =["[customer_name]","[entryNumber]"];
+						$data['message'] = str_replace( $toreplace, $variables, $temp );
+						break;
+				case 'Noti/883':
 						$toreplace       = ["[customer_name]","[entryNumber]"];
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
-						break;					
+						break;
+				case 'BONGO/333':
+						$toreplace       = ["[customer_name]","[entryNumber]"];
+						$data['message'] = str_replace( $toreplace, $variables, $temp );
+						break;
 				default:
 					$data['message'] = isset( $variables['message'] ) ? $variables['message'] : '';
 					break;
