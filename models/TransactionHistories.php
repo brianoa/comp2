@@ -406,7 +406,7 @@ class TransactionHistories extends \yii\db\ActiveRecord
                 Myhelper::setSms('yangaDraw',$row->MSISDN,[],SENDER_NAME,$station_id);
             }else {                
                 switch ($station_id) {
-                    case '5b391cd0-92e3-11ec-b55f-9d46adbdc48d	':
+                    case '5b391cd0-92e3-11ec-b55f-9d46adbdc48d':
                         Myhelper::setSms('Noti/883', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
                         break;
                     case '0afb29d0-021e-11ef-8ae4-53a0b7361a5b':
