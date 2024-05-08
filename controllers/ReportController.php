@@ -929,9 +929,9 @@ class ReportController extends Controller{
         $this->playerDataCurrent($start_date, $end_date);
 
     }
-    public function actionPlayerarchive()
+    public function actionPlayerarchive($start_date,$end_date)
     {
-        $this->playerDataarchive();
+        $this->playerDataarchive($start_date,$end_date);
 
     }
     public function actionPlayerlastmonth()
@@ -991,9 +991,9 @@ class ReportController extends Controller{
         Yii::$app->end();
         return ob_get_clean();
     }
-    private function playerDataArchive()
+    private function playerDataArchive($start_date,$end_date)
     {
-        $archive=ArchivedTransactionHistories::getUniquePlayers();
+        $archive=ArchivedTransactionHistories::getUniquePlayers($start_date,$end_date);
         $filename=SENDER_NAME."archive".".csv";
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename='.$filename );
