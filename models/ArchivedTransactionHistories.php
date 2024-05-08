@@ -200,7 +200,7 @@ class ArchivedTransactionHistories extends \yii\db\ActiveRecord
         WHERE a.created_at >= :start_date AND a.created_at <= :end_date 
         GROUP BY a.reference_name, a.reference_phone, b.name";
 
-         return Yii::$app->db->createCommand($sql)
+         return Yii::$app->analytics_db->createCommand($sql)
          ->bindValue(':start_date', $start_date)
          ->bindValue(':end_date', $end_date)
          ->queryAll();
