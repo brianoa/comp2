@@ -882,15 +882,15 @@ class Myhelper extends Component {
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
 						break;
 				case '881/EBONY':
-						$toreplace       =["[customer_name]","[entryNumber]"];
+						$toreplace       =["[entryNumber]"];
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
 						break;
 				case 'Noti/883':
-						$toreplace       = ["[customer_name]","[entryNumber]"];
+						$toreplace       = ["[entryNumber]"];
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
 						break;
 				case 'BONGO/333':
-						$toreplace       = ["[customer_name]","[entryNumber]"];
+						$toreplace       = ["[entryNumber]"];
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
 						break;
 				default:
