@@ -271,7 +271,7 @@ class DisbursementsController extends Controller
                     foreach($arr as $row)
                     {
                         $row = (object)$row;
-                        Disbursements::saveDisbursement("",$row->reference_name,$row->phone_number,$row->amount,"management_commission",0,NULL);
+                        Disbursements::saveDisbursement("",$row->reference_name,$row->phone_number,$row->amount,"management_commission",4,NULL);
                     }
                 }
 			}
@@ -285,5 +285,48 @@ class DisbursementsController extends Controller
 		);
 
 	}
+
+    public function actionUploadeddisbursements()
+    {
+        $data = Disbursements::find()->where(["in", "status", ['4','5']])->all();
+        return $this->render( 'uploaded_disbursements', 
+        [
+            'data' => $data
+        ]
+        );
+
+    }
+
+    public function actionUpdatestatus()
+    {
+        if (\Yii::$app->request->isAjax) {
+            $id = \Yii::$app->request->post('id');
+            $status = \Yii::$app->request->post('status');
+
+            $disbursement = Disbursements::findOne($id);
+
+            if ($disbursement) {
+                $disbursement->status = $status;
+                if ($disbursement->save(false)) {
+                    if($disbursement->status == 0){
+                        Yii::$app->session->setFlash('success','Record Approved!');
+                    }else {
+                        Yii::$app->session->setFlash('success','Record Rejected!');
+                    }
+                    
+                    return 'Success';
+                } else {
+                    \Yii::$app->response->statusCode = 500;
+                    return 'Error: Unable to save model';
+                }
+            } else {
+                \Yii::$app->response->statusCode = 404;
+                return 'Record not found';
+            }
+        } else {
+            \Yii::$app->response->statusCode = 400;
+            return 'Error: Invalid request';
+        }
+    }
 
 }

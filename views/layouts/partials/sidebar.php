@@ -196,6 +196,9 @@ use luc\tourist\Tourist;
                     <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Upload Disbursement', Url::to(['/disbursements/upload']), ['class' => '', 'id' => 'appmenu'])?>
                 </li>
                 <li class="<?=$adminvisibility?> <?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?>  <?=$customercarevisibility?>">
+                    <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Uploaded Disbursements', Url::to(['/disbursements/uploadeddisbursements']), ['class' => '', 'id' => 'appmenu'])?>
+                </li>
+                <li class="<?=$adminvisibility?> <?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?>  <?=$customercarevisibility?>">
                     <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Presenter Disbursement', Url::to(['/commissions/index','t'=>'p']), ['class' => '', 'id' => 'appmenu'])?>
                 </li>
                 <li class="<?=$adminvisibility?> <?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?>  <?=$customercarevisibility?>">
