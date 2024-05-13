@@ -407,13 +407,13 @@ class TransactionHistories extends \yii\db\ActiveRecord
             }else {                
                 switch ($station_id) {
                     case '5b391cd0-92e3-11ec-b55f-9d46adbdc48d':
-                        Myhelper::setSms('Noti/883', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        Myhelper::setSms('Noti/883', $row->MSISDN, [ rand(0, 999999)], SENDER_NAME, $station_id);
                         break;
                     case '0afb29d0-021e-11ef-8ae4-53a0b7361a5b':
-                        Myhelper::setSms('881/EBONY', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        Myhelper::setSms('881/EBONY', $row->MSISDN, [ rand(0, 999999)], SENDER_NAME, $station_id);
                         break;
                     case 'aef96b80-021a-11ef-a72a-41894b4c89f5':
-                        Myhelper::setSms('BONGO/333', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
+                        Myhelper::setSms('BONGO/333', $row->MSISDN, [ rand(0, 999999)], SENDER_NAME, $station_id);
                         break;
                     default:
                         Myhelper::setSms('validDrawEntry', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);

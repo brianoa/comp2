@@ -192,12 +192,18 @@ class ArchivedTransactionHistories extends \yii\db\ActiveRecord
         return Yii::$app->analytics_db->createCommand($sql)
         ->queryAll();
     }
-    public static function getUniquePlayers()
+    public static function getUniquePlayers($start_date,$end_date)
     {
-        $sql="SELECT a.reference_name,a.reference_phone,b.name FROM transaction_histories a 
-        LEFT JOIN stations b ON a.station_id=b.id GROUP BY a.reference_name,a.reference_phone,b.name";
-        return Yii::$app->analytics_db->createCommand($sql)
-        ->queryAll();
+        $sql="SELECT a.reference_name, a.reference_phone, b.name 
+        FROM transaction_histories a 
+        LEFT JOIN stations b ON a.station_id = b.id 
+        WHERE a.created_at >= :start_date AND a.created_at <= :end_date 
+        GROUP BY a.reference_name, a.reference_phone, b.name";
+
+         return Yii::$app->analytics_db->createCommand($sql)
+         ->bindValue(':start_date', $start_date)
+         ->bindValue(':end_date', $end_date)
+         ->queryAll();
     }
     public static function removeDups($unique_field,$limits)
     {
