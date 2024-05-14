@@ -155,7 +155,12 @@ class Disbursements extends \yii\db\ActiveRecord
             $model->disbursement_type=$disbursement_type;
             $model->created_at=date("Y-m-d H:i:s");
             $model->save(false);
-            Yii::$app->queue->push(new DisburseJob(['id'=>$model->id]));
+            $telco = Myhelper::getOperator($phone_number);
+            if($status == 0)
+            {
+                Yii::$app->queue->push(new DisburseJob(['id'=>$model->id, "telco" => $telco]));
+            }
+            
             
         } catch (IntegrityException $e) {
             //allow execution
@@ -330,13 +335,49 @@ class Disbursements extends \yii\db\ActiveRecord
 
         
     }
-    public static function tzPayout($id,$product)
+    public static function tzPayout($id,$product,$telco)
     {
-        $req=["id"=>$id,"product"=>$product];
-        $req=json_encode($req);
-        $url=TIGO_PAY_URL;
-        $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
-        Myhelper::curlPost($req,$headers,$url);
+        $req=["id"=>$id,"product"=>$product,"telco"=>$telco];
+
+        if($product == "mchongo")
+        {
+            $req=json_encode($req);
+            $url=TIGO_PAY_URL;
+            $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
+            Myhelper::curlPost($req,$headers,$url);
+        }
+
+        if($product == "bomba")
+        {
+            if($telco = "Vodacom")
+            {
+                $req=json_encode($req);
+                $url=VODA_PAY_URL;
+                $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
+                Myhelper::curlPost($req,$headers,$url);
+            }else {
+                $req=json_encode($req);
+                $url=TIGO_PAY_URL;
+                $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
+                Myhelper::curlPost($req,$headers,$url);
+            }
+
+        }
+        if($product == "supa") 
+        {
+            if($telco == "vodacom")
+            {
+                $req=json_encode($req);
+                $url=VODA_PAY_URL;
+                $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
+                Myhelper::curlPost($req,$headers,$url);
+            }
+        }
+
+        echo $url;
+
+       
+        
     }
     public static function zambiaPayout($id,$product)
     {

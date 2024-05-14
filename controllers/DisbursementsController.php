@@ -100,7 +100,8 @@ class DisbursementsController extends Controller
         $mod->save( false );
         if($mod->status==0)
         {
-            Yii::$app->queue->push(new DisburseJob(['id'=>$mod->id]));
+            $telco = Myhelper::getOperator($mod->phone_number);
+            Yii::$app->queue->push(new DisburseJob(['id'=>$mod->id,'telco' => $telco]));
         }
     }
 
@@ -275,7 +276,7 @@ class DisbursementsController extends Controller
                     }
                 }
 			}
-            return $this->redirect(['index']);
+            return $this->redirect(['uploadeddisbursements']);
 		}
 
 		return $this->render( 'upload', [
@@ -310,6 +311,8 @@ class DisbursementsController extends Controller
                 if ($disbursement->save(false)) {
                     if($disbursement->status == 0){
                         Yii::$app->session->setFlash('success','Record Approved!');
+                        $telco = Myhelper::getOperator($disbursement->phone_number);
+                        Yii::$app->queue->push(new DisburseJob(['id'=>$disbursement->id, "telco" => $telco]));
                     }else {
                         Yii::$app->session->setFlash('success','Record Rejected!');
                     }

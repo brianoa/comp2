@@ -273,7 +273,8 @@ class ArchivedTransactionHistories extends \yii\db\ActiveRecord
                     $disbursementmodel->created_at = date('Y-m-d H:i:s');
                     $disbursementmodel->unique_field=date("Ymd")."#".$response[$i]->reference_phone;
                     $disbursementmodel->save(FALSE);
-                    Yii::$app->queue->push(new DisburseJob(['id'=>$disbursementmodel->id]));
+                    $telco = Myhelper::getOperator($disbursementmodel->phone_number);
+                    Yii::$app->queue->push(new DisburseJob(['id'=>$disbursementmodel->id,'telco' => $telco]));
                     $response[$i]->delete(false);
                     $arr=['amount'=>$amount];
                     Myhelper::setSms('rewardPlayer',$disbursementmodel->phone_number,$arr,SENDER_NAME,$response[$i]->station_id);

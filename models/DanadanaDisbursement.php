@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\components\DisburseJob;
+use app\components\Myhelper;
 use Webpatser\Uuid\Uuid;
 use Yii;
 use yii\db\IntegrityException;
@@ -128,7 +129,8 @@ class DanadanaDisbursement extends \yii\db\ActiveRecord
             $model->disbursement_type=$disbursement_type;
             $model->created_at=date("Y-m-d H:i:s");
             $model->save(false);
-            Yii::$app->queue->push(new DisburseJob(['id'=>$model->id]));
+            $telco = Myhelper::getOperator($model->phone_number);
+            Yii::$app->queue->push(new DisburseJob(['id'=>$model->id,'telco' => $telco]));
             
         } catch (IntegrityException $e) {
             //allow execution

@@ -8,15 +8,21 @@ use yii\base\BaseObject;
 class DisburseJob extends BaseObject implements \yii\queue\JobInterface
 {
     public $id;
+    public $telco;
     public function execute($queue)
     {
-        if(in_array(gethostname(),[EFMTZ_COM]))
-        {
-            //Disbursements::tzPayout($this->id,"mshindo");
-        }
+       
         if(in_array(gethostname(),[CMEDIA_COTZ]))
         {
-            // Disbursements::tzPayout($this->id,"mchongo");
+            Disbursements::tzPayout($this->id,"mchongo", $this->telco);
+        }
+        if(in_array(gethostname(),[MCHEZOBOMBA,'Walumbe']))
+        {
+            Disbursements::tzPayout($this->id,"bomba", $this->telco);
+        }
+        if(in_array(gethostname(),[MCHEZOSUPA])) 
+        {
+            Disbursements::tzPayout($this->id,"supa", $this->telco);
         }
         
     }

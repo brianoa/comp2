@@ -103,7 +103,8 @@ class DanadanadisbursementController extends Controller
         $mod->save( false );
         if($mod->status==0)
         {
-            Yii::$app->queue->push(new DisburseJob(['id'=>$mod->id]));
+            $telco = Myhelper::getOperator($mod->phone_number);
+            Yii::$app->queue->push(new DisburseJob(['id'=>$mod->id,'telco' =>$telco]));
         }
     }
 

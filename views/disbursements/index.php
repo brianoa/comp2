@@ -86,7 +86,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             return "Failed";
                         } else if ( $model->status == 3 ) {
                             return "Return";
-                        } else {
+                        }  else if ( $model->status == 4 ) {
+                            return "Uploaded";
+                        }else {
                             return "Pending";
                         }
                     endif;
