@@ -195,8 +195,8 @@ use luc\tourist\Tourist;
                 <li class="<?=$adminvisibility?> <?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?>  <?=$customercarevisibility?>">
                     <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Upload Disbursement', Url::to(['/disbursements/upload']), ['class' => '', 'id' => 'appmenu'])?>
                 </li>
-                <li class="<?=$adminvisibility?> <?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?>  <?=$customercarevisibility?>">
-                    <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Uploaded Disbursements', Url::to(['/disbursements/uploadeddisbursements']), ['class' => '', 'id' => 'appmenu'])?>
+                <li class="<?= in_array( Yii::$app->user->identity->email, Yii::$app->myhelper->getMembers( array( '' ), array(45) ) ) ? '':'hidden'?>  ">
+                    <?= Html::a('Uploaded Disbursements', Url::to(['/disbursements/uploadeddisbursements']), ['class' => '', 'id' => 'appmenu'])?>
                 </li>
                 <li class="<?=$adminvisibility?> <?= $presentervisibility?> <?=$managementvisibility?> <?=$stationmanagementvisibility?>  <?=$customercarevisibility?>">
                     <?= Html::a('<i class="metismenu-icon fa fa-chart-bar"></i> Presenter Disbursement', Url::to(['/commissions/index','t'=>'p']), ['class' => '', 'id' => 'appmenu'])?>

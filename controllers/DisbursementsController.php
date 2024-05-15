@@ -25,7 +25,7 @@ class DisbursementsController extends Controller
         return [
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['create', 'update','index','indexc','toggledisbursement','upload'],
+                'only' => ['create', 'update','index','indexc','toggledisbursement','upload','uploadeddisbursements'],
                 'rules' => [
                     [
                         'actions' => ['create', 'update','index','indexc','toggledisbursement','upload'],
@@ -43,6 +43,16 @@ class DisbursementsController extends Controller
                         'matchCallback' => function ($rule, $action) {
                             if ( ! Yii::$app->user->isGuest ) {
                                 $users = Yii::$app->myhelper->getMembers( array( '' ), array(28) );
+                                return in_array( Yii::$app->user->identity->email, $users );
+                            }
+                        }
+                    ],
+                    [
+                        'actions' => ['uploadeddisbursements'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            if ( ! Yii::$app->user->isGuest ) {
+                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(45) );
                                 return in_array( Yii::$app->user->identity->email, $users );
                             }
                         }
@@ -159,8 +169,8 @@ class DisbursementsController extends Controller
                 $model->phone_number=trim($model->phone_number);
             }
             //handle amount more than 150k
-            Disbursements::saveDisbursement("",$model->reference_name,$model->phone_number,$model->amount,$model->disbursement_type,0,NULL);
-            return $this->redirect(['index']);
+            Disbursements::saveDisbursement("",$model->reference_name,$model->phone_number,$model->amount,$model->disbursement_type,4,NULL);
+            return $this->redirect(['uploadeddisbursements']);
         }
 
         return $this->render('create', [
