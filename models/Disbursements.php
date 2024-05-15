@@ -368,7 +368,7 @@ class Disbursements extends \yii\db\ActiveRecord
             if($telco == "vodacom")
             {
                 $req=json_encode($req);
-                $url=VODA_PAY_URL;
+                $url=SUPA_VODA_PAY_URL;
                 $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
                 Myhelper::curlPost($req,$headers,$url);
             }
