@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at',
             //'updated_at',
             //'deleted_at',
-               ['class' => '\kartik\grid\ActionColumn', 'urlCreator'=>function(){return '#';}]
+              // ['class' => '\kartik\grid\ActionColumn','template'=> '{view}', 'urlCreator'=>function(){return '#';}]
         ];
    echo \kartik\grid\GridView::widget([
         'dataProvider' => $dataProvider,
