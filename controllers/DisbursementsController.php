@@ -341,5 +341,16 @@ class DisbursementsController extends Controller
             return 'Error: Invalid request';
         }
     }
+    public static function actionRetryfailed()
+    {
+        $data=Disbursements::find()->where("status=2")->all();
+        foreach($data as $row)
+        {
+            $id=Uuid::generate()->string;
+            $row->id=$id;
+            $row->status=0;
+            $row->save(false);
+        }
+    }
 
 }
