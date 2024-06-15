@@ -371,6 +371,11 @@ class Disbursements extends \yii\db\ActiveRecord
                 $url=SUPA_VODA_PAY_URL;
                 $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
                 Myhelper::curlPost($req,$headers,$url);
+            }else{
+                $req=json_encode($req);
+                $url=TIGO_PAY_URL;
+                $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
+                Myhelper::curlPost($req,$headers,$url);
             }
         }
 
