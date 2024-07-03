@@ -349,7 +349,7 @@ class Disbursements extends \yii\db\ActiveRecord
 
         if($product == "bomba")
         {
-            if($telco = "Vodacom")
+            if($telco == "vodacom")
             {
                 $req=json_encode($req);
                 $url=VODA_PAY_URL;
