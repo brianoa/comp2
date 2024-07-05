@@ -352,5 +352,10 @@ class DisbursementsController extends Controller
             $row->save(false);
         }
     }
-
+    public function actionDisb($id){
+        $model = $this->findModel($id);
+        if ($model !== null) {
+            $model->delete();
+        }
+}
 }
