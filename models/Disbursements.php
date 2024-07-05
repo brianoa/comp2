@@ -359,7 +359,7 @@ class Disbursements extends \yii\db\ActiveRecord
                 $req=json_encode($req);
                 $url=TIGO_PAY_URL;
                 $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
-                Myhelper::curlPost($req,$headers,$url);
+                var_dump(Myhelper::curlPost($req,$headers,$url));
             }
 
         }
