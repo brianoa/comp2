@@ -416,6 +416,9 @@ class TransactionHistories extends \yii\db\ActiveRecord
                     case 'aef96b80-021a-11ef-a72a-41894b4c89f5':
                         Myhelper::setSms('BONGO/333', $row->MSISDN, [ rand(0, 999999)], SENDER_NAME, $station_id);
                         break;
+                    case '7f7cc0c0-f320-11ee-8913-1fcc0d34011b':
+                            Myhelper::setSms('255/KONDE', $row->MSISDN, [ rand(0, 999999)], SENDER_NAME, $station_id);
+                            break;
                     default:
                         Myhelper::setSms('validDrawEntry', $row->MSISDN, ['Habari', rand(0, 999999)], SENDER_NAME, $station_id);
                         break;
