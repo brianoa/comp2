@@ -325,30 +325,6 @@ class WinninghistoriesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    public function actionDelwinners(){
-        $ids = [
-            'c3814780-3ecf-11ef-85e2-ab85e53c1a3a',
-            '21dbc000-3ece-11ef-bf19-1f671320ed83',
-            '023e7b40-3ece-11ef-b36f-47847907a57a',
-            '55874be0-3ecc-11ef-9e9b-75f1cac99435',
-            '4ea24bc0-3ecc-11ef-a8f1-414d96f8cbe2',
-            'ef907990-3ecb-11ef-9638-bd2514a8ca05',
-            '7cf120e0-3ecb-11ef-9a5d-d9a21ab45904',
-            '3a23bf00-3ecb-11ef-93de-89f69529c255',
-            '52d59640-3eca-11ef-89e6-f3a4bd5dd299',
-            '073b3020-3ec7-11ef-9468-4551b0d5d517',
-            'c62dd580-3ec6-11ef-8f60-3d4b881e4a30',
-            'b8736f20-3ec6-11ef-a9d1-e14458cc0362',
-            '81cc3080-3ec6-11ef-9677-53c49df6dc38',
-            '73019570-3ec6-11ef-87ec-efb044dde48a',
-            '694b5820-3ec6-11ef-9762-93cadc270c8a'
-        ];
-        $sql = "DELETE FROM winning_histories WHERE id IN 
-        ('" . implode("','", $ids) . "')";
-        $sql =Yii::$app->db->createCommand($sql);
-        $sql->execute();
-
-    }
     public function beforeAction($action)
     {            
         if ($action->id == '') {
