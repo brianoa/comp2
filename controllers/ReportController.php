@@ -924,14 +924,14 @@ class ReportController extends Controller{
     }
 
     //removed action
-    public function actionPlayercurrent($start_date, $end_date)
+    public function actionPlayercurrent($start_date,$end_date,$station_id=null)
     {
-        $this->playerDataCurrent($start_date, $end_date);
+        $this->playerDataCurrent($start_date,$end_date,$station_id);
 
     }
-    public function actionPlayerarchive($start_date,$end_date)
+    public function actionPlayerarchive($start_date,$end_date,$station_id=null)
     {
-        $this->playerDataarchive($start_date,$end_date);
+        $this->playerDataarchive($start_date,$end_date,$station_id);
 
     }
     public function actionPlayerlastmonth()
@@ -965,14 +965,14 @@ class ReportController extends Controller{
         Yii::$app->end();
         return ob_get_clean();
     }
-    private function playerDataCurrent($start_date,$end_date)
+    private function playerDataCurrent($start_date,$end_date,$station_id)
     {
        /* $archive=[];
         $current=[];
         $archive=ArchivedTransactionHistories::getUniquePlayers();
         $current=TransactionHistories::getUniquePlayers();
         TransactionHistories::merge($archive,$current);*/
-        $current=TransactionHistories::getUniquePlayers($start_date,$end_date);
+        $current=TransactionHistories::getUniquePlayers($start_date,$end_date,$station_id);
         $filename=SENDER_NAME."current".".csv";
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename='.$filename );
@@ -991,9 +991,9 @@ class ReportController extends Controller{
         Yii::$app->end();
         return ob_get_clean();
     }
-    private function playerDataArchive($start_date,$end_date)
+    private function playerDataArchive($start_date,$end_date,$station_id)
     {
-        $archive=ArchivedTransactionHistories::getUniquePlayers($start_date,$end_date);
+        $archive=ArchivedTransactionHistories::getUniquePlayers($start_date,$end_date,$station_id);
         $filename=SENDER_NAME."archive".".csv";
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename='.$filename );
@@ -1051,8 +1051,8 @@ class ReportController extends Controller{
     public function actionMerge($file1,$file2,$file3)
     {
         ini_set('memory_limit', '1024M');
-        $file1="/mnt/c/Users/walummbe/Downloads/dbs/".$file1.".csv";
-        $file2="/mnt/c/Users/walummbe/Downloads/dbs/".$file2.".csv";
+        $file1="/mnt/c/Users/Cesay/Downloads/dbs/".$file1.".csv";
+        $file2="/mnt/c/Users/Cesay/Downloads/dbs/".$file2.".csv";
         $handle = fopen($file1, "r");
         $seen=[];
         $final=[];

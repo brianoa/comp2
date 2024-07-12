@@ -220,19 +220,59 @@ class TransactionHistories extends \yii\db\ActiveRecord
         return Yii::$app->db->createCommand($sql)
         ->queryAll();
     }
-    public static function getUniquePlayers($start_date, $end_date)
+    public static function getUniquePlayers($start_date, $end_date, $station_id)
     {
-        $sql="SELECT a.reference_name, a.reference_phone, b.name 
-        FROM transaction_histories a 
-        LEFT JOIN stations b ON a.station_id = b.id 
-        WHERE a.created_at >= :start_date AND a.created_at <= :end_date 
-        GROUP BY a.reference_name, a.reference_phone, b.name";
+        $db = Yii::$app->db;
+        $params = [
+            ':start_date' => $start_date,
+            ':end_date' => $end_date,
+        ];
+        if ($station_id !== null) {
+            $sql = "SELECT a.reference_name, a.reference_phone, b.name
+            FROM transaction_histories a
+            LEFT JOIN stations b ON a.station_id = b.id
+            WHERE a.created_at >= :start_date
+            AND a.created_at <= :end_date
+            AND a.station_id = :station_id
+            GROUP BY a.reference_name, a.reference_phone, b.name";
+            $params[':station_id'] = $station_id;
+        } else {
+            $sql = "SELECT a.reference_name, a.reference_phone, b.name
+            FROM transaction_histories a
+            LEFT JOIN stations b ON a.station_id = b.id
+            WHERE a.created_at >= :start_date
+            AND a.created_at <= :end_date
+            GROUP BY a.reference_name, a.reference_phone, b.name";
+            }
+            return $db->createCommand($sql)
+            ->bindValues($params)
+            ->queryAll();
+        }
+    
+public static function stationplayerDataCurrent($start_date, $end_date, $station_id)
+{
+    $sql = "SELECT a.reference_name, a.reference_phone, b.name 
+            FROM transaction_histories a 
+            LEFT JOIN stations b ON a.station_id = b.id 
+            WHERE a.created_at >= :start_date 
+              AND a.created_at <= :end_date";
 
-         return Yii::$app->db->createCommand($sql)
-         ->bindValue(':start_date', $start_date)
-         ->bindValue(':end_date', $end_date)
-         ->queryAll();
+    if ($station_id !== null) {
+        $sql .= " AND a.station_id = :station_id";
     }
+
+    $sql .= " GROUP BY a.reference_name, a.reference_phone, b.name";
+
+    $command = Yii::$app->db->createCommand($sql)
+        ->bindValue(':start_date', $start_date)
+        ->bindValue(':end_date', $end_date);
+
+    if ($station_id !== null) {
+        $command->bindValue(':station_id', $station_id);
+    }
+
+    return $command->queryAll();
+}
     public static function getUniquePlayersInRange()
     {
         $sql="SELECT a.reference_name,a.reference_phone,b.name FROM transaction_histories a 

@@ -192,19 +192,35 @@ class ArchivedTransactionHistories extends \yii\db\ActiveRecord
         return Yii::$app->analytics_db->createCommand($sql)
         ->queryAll();
     }
-    public static function getUniquePlayers($start_date,$end_date)
+    public static function getUniquePlayers($start_date, $end_date, $station_id)
     {
-        $sql="SELECT a.reference_name, a.reference_phone, b.name 
-        FROM transaction_histories a 
-        LEFT JOIN stations b ON a.station_id = b.id 
-        WHERE a.created_at >= :start_date AND a.created_at <= :end_date 
-        GROUP BY a.reference_name, a.reference_phone, b.name";
-
-         return Yii::$app->analytics_db->createCommand($sql)
-         ->bindValue(':start_date', $start_date)
-         ->bindValue(':end_date', $end_date)
-         ->queryAll();
-    }
+        $db = Yii::$app->analytics_db;
+        $params = [
+            ':start_date' => $start_date,
+            ':end_date' => $end_date,
+        ];
+    
+        if ($station_id !== null) {
+            $sql = "SELECT a.reference_name, a.reference_phone, b.name
+            FROM transaction_histories a
+            LEFT JOIN stations b ON a.station_id = b.id
+            WHERE a.created_at >= :start_date
+            AND a.created_at <= :end_date
+            AND a.station_id = :station_id
+            GROUP BY a.reference_name, a.reference_phone, b.name";
+            $params[':station_id'] = $station_id;
+        } else {
+            $sql = "SELECT a.reference_name, a.reference_phone, b.name
+            FROM transaction_histories a
+            LEFT JOIN stations b ON a.station_id = b.id
+            WHERE a.created_at >= :start_date
+            AND a.created_at <= :end_date
+            GROUP BY a.reference_name, a.reference_phone, b.name";
+            }
+            return $db->createCommand($sql)
+            ->bindValues($params)
+            ->queryAll();
+        }
     public static function removeDups($unique_field,$limits)
     {
         $sql='DELETE FROM transaction_histories WHERE mpesa_payment_id=:mpesa_payment_id LIMIT :limits';
