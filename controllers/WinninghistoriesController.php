@@ -30,15 +30,15 @@ class WinninghistoriesController extends Controller
         return [
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['create', 'update','index'],
+                'only' => ['create', 'update', 'index'],
                 'rules' => [
                     [
-                        'actions' => ['create', 'update','index','notified'],
+                        'actions' => ['create', 'update', 'index', 'notified'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(24) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(24));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -59,12 +59,12 @@ class WinninghistoriesController extends Controller
      */
     public function actionIndex()
     {
-        $route = isset($_GET['route'])?$_GET['route']:null;
+        $route = isset($_GET['route']) ? $_GET['route'] : null;
         $searchModel = new WinningHistoriesSearch();
         $dataProvider = Yii::$app->myhelper->getdataprovider($searchModel);
         $act = new \app\models\ActivityLog();
-        $act -> desc = "winninghistories report";
-        $act ->setLog();
+        $act->desc = "winninghistories report";
+        $act->setLog();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -74,11 +74,12 @@ class WinninghistoriesController extends Controller
     /**
      * Method to toggle disbursement
      */
-    public function actionNotified(){
+    public function actionNotified()
+    {
         $field         = $_POST['field'];
-        $mod           = WinningHistories::findOne( $_POST['id'] );
+        $mod           = WinningHistories::findOne($_POST['id']);
         $mod->$field   = $_POST['value'];
-        $mod->save( false );
+        $mod->save(false);
     }
 
     /**
@@ -102,14 +103,13 @@ class WinninghistoriesController extends Controller
     public function actionCreate()
     {
         $model = new WinningHistories();
-        
-        
+
+
         if ($model->load(Yii::$app->request->post())) {
-            $model->id=Uuid::generate()->string;
-            $model->status=0;
-            $model->station_show_prize_id=$model->prize_id;
-            if($model->save())
-            {
+            $model->id = Uuid::generate()->string;
+            $model->status = 0;
+            $model->station_show_prize_id = $model->prize_id;
+            if ($model->save()) {
                 return $this->redirect(['create']);
             }
         }
@@ -118,164 +118,206 @@ class WinninghistoriesController extends Controller
             'model' => $model,
         ]);
     }
+    public function actionTopplayerdraw()
+    {
+        $today = date("Y-m-d");
+        $response['status'] = "";
+        $response['message'] = "";
+        $response['data'] = [];
+        $value = Yii::$app->request->post();
+        $to = $value['to'];
+        $from = $value['from'];
+        $station_id = $value['station_id'];
+        $station_show_id = $value['station_show_id'];
+        $response = [
+            'status' => "",
+            'message' => "",
+            'data' => []
+        ];
+
+        // $value = Yii::$app->request->post();
+        // $station_id = $value['station_id'] ?? null;
+        // $station_show_id = $value['station_show_id'] ?? null;
+        // $from = $value['from'] ?? date("Y-m-d", strtotime('-7 days'));
+        // $to = $value['to'] ?? date("Y-m-d");
+
+        if (!$station_id && !$station_show_id && !$from && !$to) {
+            $response['status'] = "fail";
+            $response['message'] = "Please provide at least one filter.";
+            return \Yii::$app->response->data = json_encode($response);
+        }
+
+        $query = TransactionHistories::find()
+            ->alias('t')
+            ->leftJoin('station_shows ss', 'ss.id = t.station_show_id')
+            ->leftJoin('stations s', 's.id = ss.station_id')
+            ->where(['between', 't.created_at', $from, $to])
+            ->andFilterWhere(['ss.station_id' => $station_id])
+            ->andFilterWhere(['t.station_show_id' => $station_show_id])
+            ->groupBy(['t.reference_phone'])
+            ->orderBy(['COUNT(t.id)' => SORT_DESC])
+            ->limit(10);
+
+        $topPlayers = $query->all();
+
+        if (count($topPlayers) == 0) {
+            $response['status'] = "fail";
+            $response['message'] = "No top players found for the given criteria.";
+            return \Yii::$app->response->data = json_encode($response);
+        }
+
+        $selectedPlayer = $topPlayers[array_rand($topPlayers)];
+
+        $response['status'] = "success";
+        $response['message'] = "Top player draw successful.";
+        $response['data'] = $selectedPlayer;
+
+        return \Yii::$app->response->data = json_encode($response);
+        $prize_id = $value['prize_id'];
+        print_r($station_id);
+        print_r($station_show_id);
+        print_r($prize_id);
+        print_r($from);
+        print_r($to);
+        exit;
+    }
     public function actionDraw()
     {
-        $today=date("Y-m-d");
-        $response['status']="";
-        $response['message']="";
-        $response['data']=[];
-        $value=Yii::$app->request->post();
-        $station_show_id=$value['station_show_id'];
-        $presenter_id=$value['presenter_id'];
-        $prize_id=$value['prize_id'];
-        if(!isset($value['from']) ||!isset($value['admin_draw']))
-        {
-            $response['status']="fail";
-            $response['message']="PLEASE REFRESH PAGE AND TRY AGAIN";
+        $today = date("Y-m-d");
+        $response['status'] = "";
+        $response['message'] = "";
+        $response['data'] = [];
+        $value = Yii::$app->request->post();
+        $station_show_id = $value['station_show_id'];
+        $presenter_id = $value['presenter_id'];
+        $prize_id = $value['prize_id'];
+        if (!isset($value['from']) || !isset($value['admin_draw'])) {
+            $response['status'] = "fail";
+            $response['message'] = "PLEASE REFRESH PAGE AND TRY AGAIN";
             return \Yii::$app->response->data = json_encode($response);
-            
         }
-        
-        $from=$value['from'];
-        $to=$value['to'];
-        $admin_draw=$value['admin_draw'];
+
+        $from = $value['from'];
+        $to = $value['to'];
+        $admin_draw = $value['admin_draw'];
         //if presenter is not admin drop him
-        if($admin_draw==1)
-        {
-            $presenter_show=StationShowPresenters::adminStationShow($station_show_id,strtolower(date("l",strtotime($from))));
-        }
-        else if($admin_draw==2)
-        {
-            $presenter_show=StationShowPresenters::jackpotShow($station_show_id);
-        }
-        else
-        {
-            $presenter_show=StationShowPresenters::presenterStationShow($presenter_id,strtolower(date("l")));
+        if ($admin_draw == 1) {
+            $presenter_show = StationShowPresenters::adminStationShow($station_show_id, strtolower(date("l", strtotime($from))));
+        } else if ($admin_draw == 2) {
+            $presenter_show = StationShowPresenters::jackpotShow($station_show_id);
+        } else {
+            $presenter_show = StationShowPresenters::presenterStationShow($presenter_id, strtolower(date("l")));
         }
 
-        if(!$presenter_show['is_admin'])
-        {
-            $response['status']="fail";
-            $response['message']="PRESENTER MUST BE ADMIN";
+        if (!$presenter_show['is_admin']) {
+            $response['status'] = "fail";
+            $response['message'] = "PRESENTER MUST BE ADMIN";
         }
-        if($admin_draw==2)
-        {
-            $show_prize=StationShowPrizes::getShowPrize(strtolower(date("l",strtotime($today))),$station_show_id,$prize_id,$today);
-        }
-        else{
-            $show_prize=StationShowPrizes::getShowPrize(strtolower(date("l",strtotime($from))),$station_show_id,$prize_id,$from);
-            $plus30=date("H:i",(strtotime($presenter_show['start_time'])+1800));
-            if(date("H:i") < $plus30)
-            {
-                $show_prize=NULL;
+        if ($admin_draw == 2) {
+            $show_prize = StationShowPrizes::getShowPrize(strtolower(date("l", strtotime($today))), $station_show_id, $prize_id, $today);
+        } else {
+            $show_prize = StationShowPrizes::getShowPrize(strtolower(date("l", strtotime($from))), $station_show_id, $prize_id, $from);
+            $plus30 = date("H:i", (strtotime($presenter_show['start_time']) + 1800));
+            if (date("H:i") < $plus30) {
+                $show_prize = NULL;
             }
-
         }
-        
-        if($show_prize)
-        {
+
+        if ($show_prize) {
             //pick a random person
-            $past_winners=WinningHistories::distinctWinners($presenter_show['station_id'],$presenter_show['frequency'],date("Y-m-d H:i:s"));
-            array_push($past_winners,'1');
-            if($admin_draw=="2")
-            {
-                $transaction_history=TransactionHistories::pickJackpot($past_winners,$from,$to,$presenter_show['station_id']);
-            }
-            else
-            {
-                $transaction_history=TransactionHistories::pickRandom($station_show_id,$past_winners,$from);
-            }
-            
-            if($transaction_history)
-            {
-                try
-                {
-                    if($show_prize['prizes_given'] < $show_prize['draw_count'])
-                    {
-                        $draw_count=$show_prize['prizes_given']+1;
-                        $unique_field=$draw_count."#".date("Ymd",strtotime($from))."#".$station_show_id."#".$prize_id;
-                    }
-                    else
-                    {
-                        $unique_field=$show_prize['prizes_given']."#".date("Ymd",strtotime($from))."#".$station_show_id."#".$prize_id;
-                    }
-                    $win_key=Uuid::generate()->string;
-                    $model=WinningHistories::saveWin($win_key,$prize_id,$transaction_history['reference_name'],$transaction_history['reference_phone']
-                            ,$transaction_history['reference_code'],$transaction_history['station_id'],$station_show_id
-                        ,$presenter_id,$show_prize['amount'],$unique_field);
-                    if($model!=NULL)
-                    {
-                        
-                        if($show_prize['enable_tax'])
-                        {
-                            $pay_percent=(100-$show_prize['tax']);
-                            $to_pay=round(($show_prize['amount']*($pay_percent/100)));
-                        }
-                        else
-                        {
-                            $to_pay=$show_prize['amount'];
-                        }
-                        $dup_check=Disbursements::checkDuplicate($win_key,$transaction_history['reference_phone'],$to_pay);
-                        if($dup_check==0 && $admin_draw!=2)
-                        {
-                            if($show_prize['mpesa_disbursement'])
-                            {
-                                Disbursements::saveDisbursement($win_key,$transaction_history['reference_name'],$transaction_history['reference_phone'],$to_pay,"winning",0,$transaction_history['station_id']);
-                            }
-                            else
-                            {
-                                if(!$show_prize['mpesa_disbursement'] && $show_prize['disbursable_amount'] > 0 )
-                                {
-                                    $win_key=Uuid::generate()->string;
-                                    $unique_field.="extra";
-                    $model=WinningHistories::saveWin($win_key,NULL,$transaction_history['reference_name'],$transaction_history['reference_phone']
-                            ,$transaction_history['reference_code'],$transaction_history['station_id'],$transaction_history['station_show_id']
-                        ,$presenter_id,$show_prize['disbursable_amount'],$unique_field);
-                                    Disbursements::saveDisbursement($win_key,$transaction_history['reference_name'],$transaction_history['reference_phone'],$show_prize['disbursable_amount'],"winning",0,$transaction_history['station_id']);
-                                }
+            $past_winners = WinningHistories::distinctWinners($presenter_show['station_id'], $presenter_show['frequency'], date("Y-m-d H:i:s"));
+            array_push($past_winners, '1');
+            if ($admin_draw == "2") {
+                $transaction_history = TransactionHistories::pickJackpot($past_winners, $from, $to, $presenter_show['station_id']);
+            } else if ($admin_draw == "3") {
 
+                $transaction_history = TransactionHistories::pickRandomWinnerFromTopPlayers($station_show_id, $past_winners, $from);
+            } else {
+                $transaction_history = TransactionHistories::pickRandom($station_show_id, $past_winners, $from);
+            }
+
+            if ($transaction_history) {
+                try {
+                    if ($show_prize['prizes_given'] < $show_prize['draw_count']) {
+                        $draw_count = $show_prize['prizes_given'] + 1;
+                        $unique_field = $draw_count . "#" . date("Ymd", strtotime($from)) . "#" . $station_show_id . "#" . $prize_id;
+                    } else {
+                        $unique_field = $show_prize['prizes_given'] . "#" . date("Ymd", strtotime($from)) . "#" . $station_show_id . "#" . $prize_id;
+                    }
+                    $win_key = Uuid::generate()->string;
+                    $model = WinningHistories::saveWin(
+                        $win_key,
+                        $prize_id,
+                        $transaction_history['reference_name'],
+                        $transaction_history['reference_phone'],
+                        $transaction_history['reference_code'],
+                        $transaction_history['station_id'],
+                        $station_show_id,
+                        $presenter_id,
+                        $show_prize['amount'],
+                        $unique_field
+                    );
+                    if ($model != NULL) {
+
+                        if ($show_prize['enable_tax']) {
+                            $pay_percent = (100 - $show_prize['tax']);
+                            $to_pay = round(($show_prize['amount'] * ($pay_percent / 100)));
+                        } else {
+                            $to_pay = $show_prize['amount'];
+                        }
+                        $dup_check = Disbursements::checkDuplicate($win_key, $transaction_history['reference_phone'], $to_pay);
+                        if ($dup_check == 0 && $admin_draw != 2) {
+                            if ($show_prize['mpesa_disbursement']) {
+                                Disbursements::saveDisbursement($win_key, $transaction_history['reference_name'], $transaction_history['reference_phone'], $to_pay, "winning", 0, $transaction_history['station_id']);
+                            } else {
+                                if (!$show_prize['mpesa_disbursement'] && $show_prize['disbursable_amount'] > 0) {
+                                    $win_key = Uuid::generate()->string;
+                                    $unique_field .= "extra";
+                                    $model = WinningHistories::saveWin(
+                                        $win_key,
+                                        NULL,
+                                        $transaction_history['reference_name'],
+                                        $transaction_history['reference_phone'],
+                                        $transaction_history['reference_code'],
+                                        $transaction_history['station_id'],
+                                        $transaction_history['station_show_id'],
+                                        $presenter_id,
+                                        $show_prize['disbursable_amount'],
+                                        $unique_field
+                                    );
+                                    Disbursements::saveDisbursement($win_key, $transaction_history['reference_name'], $transaction_history['reference_phone'], $show_prize['disbursable_amount'], "winning", 0, $transaction_history['station_id']);
+                                }
                             }
-                            $draw_count_balance=$show_prize['draw_count']-$show_prize['prizes_given']-1;
-                            $transaction_history['draw_count_balance']=$draw_count_balance;
-                            $station_name=$presenter_show['station_name'];
-                            $arr=[$transaction_history['reference_name'],$show_prize['name'],$station_name];
+                            $draw_count_balance = $show_prize['draw_count'] - $show_prize['prizes_given'] - 1;
+                            $transaction_history['draw_count_balance'] = $draw_count_balance;
+                            $station_name = $presenter_show['station_name'];
+                            $arr = [$transaction_history['reference_name'], $show_prize['name'], $station_name];
                             //$message=Myhelper::winningMessage($transaction_history,$show_prize,$station_name);
                             //send an sms
-                            Myhelper::setSms('winningMessage',$transaction_history['reference_phone'],$arr,SENDER_NAME,$transaction_history['station_id']);
+                            Myhelper::setSms('winningMessage', $transaction_history['reference_phone'], $arr, SENDER_NAME, $transaction_history['station_id']);
+                        } else {
+                            $draw_count_balance = $show_prize['draw_count'] - $show_prize['prizes_given'];
+                            $transaction_history['draw_count_balance'] = $draw_count_balance;
                         }
-                        else
-                        {
-                            $draw_count_balance=$show_prize['draw_count']-$show_prize['prizes_given'];
-                            $transaction_history['draw_count_balance']=$draw_count_balance;
-                        }
-    
-                        $response['status']="success";
-                        $response['message']="no message";
-                        $response['data']=$transaction_history;
+
+                        $response['status'] = "success";
+                        $response['message'] = "no message";
+                        $response['data'] = $transaction_history;
                     }
+                } catch (IntegrityException $e) {
+                    $response['status'] = "fail";
+                    $response['message'] = "DRAW ALREADY DONE FOR THIS PRIZE!";
                 }
-                catch(IntegrityException $e)
-                {
-                    $response['status']="fail";
-                    $response['message']="DRAW ALREADY DONE FOR THIS PRIZE!";
-                }
+            } else {
+                $response['status'] = "fail";
+                $response['message'] = "FAILED TO DRAW! NO TRANSACTION!";
+            }
+        } else {
+            $response['status'] = "fail";
+            $response['message'] = "NO DRAWS LEFT FOR PRIZE(S)";
+        }
 
-               
-            }
-            else{
-                $response['status']="fail";
-                $response['message']="FAILED TO DRAW! NO TRANSACTION!";
-            }
-            
-        }
-        else
-        {
-            $response['status']="fail";
-            $response['message']="NO DRAWS LEFT FOR PRIZE(S)";
-        }
-        
         \Yii::$app->response->data = json_encode($response);
-
     }
     /**
      * Updates an existing WinningHistories model.
@@ -326,11 +368,11 @@ class WinninghistoriesController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
     public function beforeAction($action)
-    {            
+    {
         if ($action->id == '') {
             $this->enableCsrfValidation = false;
         }
-    
+
         return parent::beforeAction($action);
     }
 }

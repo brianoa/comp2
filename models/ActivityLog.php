@@ -27,21 +27,23 @@ class ActivityLog extends \yii\db\ActiveRecord
         return 'activity_log';
     }
     /**
-        * Customer - Stations relationship
-        * @return \yii\db\ActiveQuery
-    */
-    public function getUser() {
-        return $this->hasOne(Users::className(), [ 'id' => 'causer_id' ] );
+     * Customer - Stations relationship
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'causer_id']);
     }
-    
-    
+
+
     /**
      * Getter for users full name
      * @return string
      */
-    public function getFullname() {
-        if (isset( $this->user->first_name ) ) {
-                return $this->user->first_name;
+    public function getFullname()
+    {
+        if (isset($this->user->first_name)) {
+            return $this->user->first_name;
         }
     }
     /**
@@ -73,16 +75,17 @@ class ActivityLog extends \yii\db\ActiveRecord
             'user' => 'Causer'
         ];
     }
-    
-    public  function setLog(){
+
+    public  function setLog()
+    {
         $mod = new ActivityLog();
-        $mod -> created_at = date('Y-m-d H:i:s');
-        $mod -> updated_at = date('Y-m-d H:i:s');
-        $mod -> is_deleted = 0;
-        $mod -> causer_id = Yii::$app->user->identity->id;
-        $mod -> description = $this->desc;
-        $mod -> properties = $this->propts;
-        $mod ->save(FALSE);
-        
+        $mod->created_at = date('Y-m-d H:i:s');
+        $mod->updated_at = date('Y-m-d H:i:s');
+        $mod->is_deleted = 0;
+        $mod->causer_id = Yii::$app->user->identity->id;
+        $mod->description = $this->desc;
+        $mod->properties = $this->propts;
+        // $mod ->save(FALSE);
+
     }
 }

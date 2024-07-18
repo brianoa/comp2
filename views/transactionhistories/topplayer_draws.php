@@ -7,14 +7,14 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\TransactionHistoriesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'JACKPOT DRAW';
+$this->title = 'TOP PLAYER DRAWS';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-histories-index">
     <div class="row">
         <div class="col-md-12">
             <?php
-            $action = '/transactionhistories/jackpotdraw';
+            $action = '/transactionhistories/topplayerdraws';
             $id = str_replace("/", "", $action);
             echo Html::beginForm(
                 $action = yii\helpers\Url::base() . $action,
@@ -25,45 +25,31 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
             <div class="form-group">
-                <label for="from">STATION SHOW:&nbsp;&nbsp; </label>
-                <?php
-                echo Html::dropDownList("show_id", $selection = $show_id, $shows, ['prompt' => '--Select--']);
-                ?>
-            </div class="form-group">
+                <label for="show_id">Show:</label>
+                <?= Html::dropDownList('show_id', $show_id, $shows, ['prompt' => '--Select Show--', 'class' => 'form-control']) ?>
+            </div>
             <div class="form-group">
-                <label for="from">&nbsp;&nbsp; FROM: &nbsp;&nbsp;</label>
-                <?= kartik\datetime\DateTimePicker::widget([
+                <label for="from_date">From Date:</label>
+                <?= yii\jui\DatePicker::widget([
                     'name' => 'from',
-                    'type' => kartik\datetime\DateTimePicker::TYPE_INPUT,
-                    'value' => (!empty($from) ? $from : date('Y-m-d 00:00:00', strtotime('-3 days', time()))),
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        //'format' => 'yyyy-MM-dd hh:ii'
-                    ]
-                ]);
-                ?>
+                    'value' => (!empty($from) ? $from : date("Y-m-d")),
+                    // 'value' => $from_date,
+                    'dateFormat' => 'yyyy-MM-dd',
+                    'options' => ['class' => 'form-control']
+                ]) ?>
             </div>
-            &nbsp;&nbsp;
             <div class="form-group">
-                <label for="to">TO: &nbsp;&nbsp;</label>
-                <?= kartik\datetime\DateTimePicker::widget([
+                <label for="to_date">To Date:</label>
+                <?= yii\jui\DatePicker::widget([
                     'name' => 'to',
-                    'type' => kartik\datetime\DateTimePicker::TYPE_INPUT,
-                    'value' => (!empty($to) ? $to : date("Y-m-d H:i:s")),
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        //'format' => 'yyyy-MM-dd hh:ii'
-                    ]
-                ]);
-                ?>
+                    'value' => (!empty($to) ? $to : date("Y-m-d")),
+                    'dateFormat' => 'yyyy-MM-dd',
+                    'options' => ['class' => 'form-control']
+                ]) ?>
             </div>
-            &nbsp;&nbsp;
-            <div class="form-group">
-                <label< /label>
-                    <br>
-                    <button type="submit" class="form-control btn btn-primary">
-                        <span class="glyphicon glyphicon-move"></span> Search &nbsp;&nbsp;
-                    </button>
+
+            <div class="form-group m-4">
+                <?= Html::submitButton(' <span class="glyphicon glyphicon-move"></span> Search &nbsp;&nbsp;', ['class' => 'btn btn-primary']) ?>
             </div>
             <br>
             <?php echo Html::endform();
@@ -96,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="card text-dark bg-light mb-3">
                 <div class="card-body">
                     <?php
-                    if (!empty($presenter_station_show)) {
+                    if (!empty($presenter_station_show) && $presenter_station_show['is_admin']) {
                     ?>
                         <button class="btn btn-primary" onclick="runDraw()" type="button">DRAW WINNER</button>
                     <?php
@@ -193,7 +179,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $presenter_id = $presenter_station_show['presenter_id'];
                                     $prize_id = $row['prize_id'];
                                 ?>
-                                    <button id="<?= $row['prize_id']; ?>" class="btn btn-danger" onclick="drawPrize('<?= $station_show_id; ?>','<?= $presenter_id; ?>','<?= $prize_id; ?>','<?= $from; ?>',3,'<?= $to; ?>')" type="button"><?= $row['name']; ?></button>
+                                    <button id="<?= $row['prize_id']; ?>" class="btn btn-danger" onclick="drawPrize('<?= $station_show_id; ?>','<?= $presenter_id; ?>','<?= $prize_id; ?>','<?= $from; ?>',3,'<?= $from; ?>')" type="button"><?= $row['name']; ?></button>
                                 <?php
                                 }
                                 ?>
