@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see http://www.yiiframework.com/
  *
@@ -38,7 +39,11 @@ class AdminAsset extends AssetBundle
         //'js/appTour.js',
         'js/highcharts.js',
         'js/custom.js',
-        'js/charts.js'
+        'js/charts.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js',
+        'js/demo/chart-area-demo.js',
+        'js/demo/chart-bar-demo.js',
+        'js/demo/chart-pie-demo.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
