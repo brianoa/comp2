@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Webpatser\Uuid\Uuid;
 use yii\db\IntegrityException;
+use app\models\DeletedWinner;
 
 /**
  * WinninghistoriesController implements the CRUD actions for WinningHistories model.
@@ -117,6 +118,52 @@ class WinninghistoriesController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+    public function actionDeletewinner()
+    {
+        $req = Yii::$app->request->post();
+        $winnerId = $req['id'];
+        $response['status'] = '';
+        $today = date('Y-m-d');
+        $winner = WinningHistories::find()
+            ->where(['id' => $winnerId])
+            ->one();
+
+        $data = DeletedWinner::findOne(["unique_field" => $winner->unique_field]);
+        if ($data) {
+            $uniqid = uniqid();
+            $unique_field = $winner->unique_field . "#" . $uniqid;
+        } else {
+            $unique_field = $winner->unique_field;
+        }
+
+        if ($winner) {
+            $deleted_winner = new DeletedWinner();
+            $deleted_winner->id = Uuid::generate()->string;
+            $deleted_winner->prize_id = $winner->prize_id;
+            $deleted_winner->station_show_prize_id = $winner->station_show_prize_id;
+            $deleted_winner->reference_name = $winner->reference_name;
+            $deleted_winner->reference_phone = $winner->reference_phone;
+            $deleted_winner->reference_code = $winner->reference_code;
+            $deleted_winner->station_id = $winner->station_id;
+            $deleted_winner->presenter_id = $winner->presenter_id;
+            $deleted_winner->station_show_id = $winner->station_show_id;
+            $deleted_winner->amount = $winner->amount;
+            $deleted_winner->transaction_cost = $winner->transaction_cost;
+            $deleted_winner->conversation_id = $winner->conversation_id;
+            $deleted_winner->transaction_reference = $winner->transaction_reference;
+            $deleted_winner->status = $winner->status;
+            $deleted_winner->notified = $winner->notified;
+            $deleted_winner->unique_field = $unique_field;
+            $deleted_winner->created_at = date('Y-m-d H:i:s');
+            $deleted_winner->save(false);
+            $winner->delete();
+            $response['status'] = 'success';
+        } else {
+            $response['status'] = 'error';
+        }
+
+        return $response['status'];
     }
     public function actionDraw()
     {

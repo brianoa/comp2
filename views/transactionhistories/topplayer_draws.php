@@ -105,6 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <th>REFERENCE</th>
                                 <th>PRIZE</th>
                                 <th>DATE</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,6 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td><?= $row['reference_code']; ?></td>
                                         <td><?= $row['name']; ?></td>
                                         <td><?= $row['created_at']; ?></td>
+                                        <td><button type="button" data-winner-id="<?= $row['id'] ?>" onclick="showDeleteWinnerModal(this)" class="btn btn-primary">WINNER DID NOT PICK</button></td>
                                     </tr>
                             <?php
                                 }
@@ -133,17 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="percent_raised" style="display:none;"><?= $percent_raised; ?></div>
     <div id="percent_pending" style="display:none;"><?= $percent_pending; ?></div>
     <!--end of hidden divs -->
-
-
-
-
-
-
 </div>
-
-
-
-
 
 <!--  draw winner Modal    -->
 <div id="draw_winner_modal" class="modal fade" role="dialog">
@@ -183,6 +175,44 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <?php
                                 }
                                 ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- winner not picking modal -->
+<div id="delete_winner_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">X</a>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <h4><span id="delete_title"></span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <input type=hidden name=bu id=bu value="">
+                <input type=hidden name=bunit id=bunit value="">
+
+                <div class="container-fluid">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12 text-center" id="prizes-grid">
+                                <h3><span id="winner_number"> This action will delete the winner. Are you sure to want to continue?</span></h3>
+
+                                <button type="button" id="del_winner" class="btn btn-danger" onclick="deleteWinner()">Delete Winner</button>
                             </div>
                         </div>
                     </div>

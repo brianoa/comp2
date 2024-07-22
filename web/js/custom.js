@@ -46,6 +46,39 @@ function runDraw() {
     location.reload();
   });
 }
+
+function showDeleteWinnerModal(clickedButton) {
+  const winnerId = $(clickedButton).data("winner-id");
+
+  $("#delete_winner_modal").data("winner-id", winnerId);
+
+  $("#delete_winner_modal").modal({});
+  $("#delete_winner_modal .modal-dialog").addClass("modal-lg");
+  $("#delete_winner_modal .modal-dialog").addClass("largerwidth");
+  $("#delete_title").html("DELETE WINNER");
+  $(".modal-backdrop").hide();
+  $("#delete_winner_modal").on("hidden.bs.modal", function () {
+    location.reload();
+  });
+}
+
+function deleteWinner() {
+  const winnerId = $("#delete_winner_modal").data("winner-id");
+  console.log("button clicked" + winnerId);
+
+  var r = confirm("Are you sure you want to delete winner?");
+  if (r == true) {
+    $.post(
+      host + "/winninghistories/deletewinner",
+      { id: winnerId },
+      function (deleteResponse) {
+        console.log(deleteResponse);
+        location.reload(true);
+      }
+    );
+  }
+}
+
 function drawPrize(
   station_show_id,
   presenter_id,
