@@ -230,7 +230,6 @@ class WinninghistoriesController extends Controller
             if ($admin_draw == "2") {
                 $transaction_history = TransactionHistories::pickJackpot($past_winners, $from, $to, $presenter_show['station_id']);
             } else if ($admin_draw == "3") {
-
                 $transaction_history = TransactionHistories::pickRandomWinnerFromTopPlayers($station_show_id, $past_winners, $from);
             } else {
                 $transaction_history = TransactionHistories::pickRandom($station_show_id, $past_winners, $from);
@@ -266,7 +265,7 @@ class WinninghistoriesController extends Controller
                             $to_pay = $show_prize['amount'];
                         }
                         $dup_check = Disbursements::checkDuplicate($win_key, $transaction_history['reference_phone'], $to_pay);
-                        if ($dup_check == 0 && $admin_draw != 2) {
+                        if ($dup_check == 0 && $admin_draw != 2 && $admin_draw != 3) {
                             if ($show_prize['mpesa_disbursement']) {
                                 Disbursements::saveDisbursement($win_key, $transaction_history['reference_name'], $transaction_history['reference_phone'], $to_pay, "winning", 0, $transaction_history['station_id']);
                             } else {
