@@ -271,7 +271,7 @@ class TransactionhistoriesController extends Controller
     }
     public function actionJackpotdraw($station_id = "", $show_id = "", $from = "", $to = '')
     {
-        $today = date("Y-m-d H:i:s");
+        $today = date("Y-m-d");
 
         $presenter = [];
         $presenter_station_show = [];

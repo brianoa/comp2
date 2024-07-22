@@ -151,7 +151,7 @@ class MpesapaymentsController extends Controller
     }
     public function actionInsertpayment($reference_code, $amount, $limit)
     {
-        if (gethostname() != 'DESKTOP-C0VBI9T') {
+        if (gethostname() != 'kuta') {
             exit();
         }
         for ($i = 0; $i < $limit; $i++) {

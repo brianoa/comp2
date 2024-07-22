@@ -118,69 +118,6 @@ class WinninghistoriesController extends Controller
             'model' => $model,
         ]);
     }
-    public function actionTopplayerdraw()
-    {
-        $today = date("Y-m-d");
-        $response['status'] = "";
-        $response['message'] = "";
-        $response['data'] = [];
-        $value = Yii::$app->request->post();
-        $to = $value['to'];
-        $from = $value['from'];
-        $station_id = $value['station_id'];
-        $station_show_id = $value['station_show_id'];
-        $response = [
-            'status' => "",
-            'message' => "",
-            'data' => []
-        ];
-
-        // $value = Yii::$app->request->post();
-        // $station_id = $value['station_id'] ?? null;
-        // $station_show_id = $value['station_show_id'] ?? null;
-        // $from = $value['from'] ?? date("Y-m-d", strtotime('-7 days'));
-        // $to = $value['to'] ?? date("Y-m-d");
-
-        if (!$station_id && !$station_show_id && !$from && !$to) {
-            $response['status'] = "fail";
-            $response['message'] = "Please provide at least one filter.";
-            return \Yii::$app->response->data = json_encode($response);
-        }
-
-        $query = TransactionHistories::find()
-            ->alias('t')
-            ->leftJoin('station_shows ss', 'ss.id = t.station_show_id')
-            ->leftJoin('stations s', 's.id = ss.station_id')
-            ->where(['between', 't.created_at', $from, $to])
-            ->andFilterWhere(['ss.station_id' => $station_id])
-            ->andFilterWhere(['t.station_show_id' => $station_show_id])
-            ->groupBy(['t.reference_phone'])
-            ->orderBy(['COUNT(t.id)' => SORT_DESC])
-            ->limit(10);
-
-        $topPlayers = $query->all();
-
-        if (count($topPlayers) == 0) {
-            $response['status'] = "fail";
-            $response['message'] = "No top players found for the given criteria.";
-            return \Yii::$app->response->data = json_encode($response);
-        }
-
-        $selectedPlayer = $topPlayers[array_rand($topPlayers)];
-
-        $response['status'] = "success";
-        $response['message'] = "Top player draw successful.";
-        $response['data'] = $selectedPlayer;
-
-        return \Yii::$app->response->data = json_encode($response);
-        $prize_id = $value['prize_id'];
-        print_r($station_id);
-        print_r($station_show_id);
-        print_r($prize_id);
-        print_r($from);
-        print_r($to);
-        exit;
-    }
     public function actionDraw()
     {
         $today = date("Y-m-d");
@@ -205,6 +142,8 @@ class WinninghistoriesController extends Controller
             $presenter_show = StationShowPresenters::adminStationShow($station_show_id, strtolower(date("l", strtotime($from))));
         } else if ($admin_draw == 2) {
             $presenter_show = StationShowPresenters::jackpotShow($station_show_id);
+        } else if ($admin_draw == 3) {
+            $presenter_show = StationShowPresenters::adminStationShow($station_show_id, strtolower(date("l", strtotime($from))));
         } else {
             $presenter_show = StationShowPresenters::presenterStationShow($presenter_id, strtolower(date("l")));
         }

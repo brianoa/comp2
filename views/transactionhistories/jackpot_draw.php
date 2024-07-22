@@ -10,6 +10,7 @@ use yii\grid\GridView;
 $this->title = 'JACKPOT DRAW';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="transaction-histories-index">
     <div class="row">
         <div class="col-md-12">
@@ -123,6 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </thead>
                         <tbody>
                             <?php
+
                             if (count($recent_winners) > 0) {
                                 foreach ($recent_winners as $row) {
                             ?>
