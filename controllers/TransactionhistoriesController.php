@@ -346,7 +346,7 @@ class TransactionhistoriesController extends Controller
         if (!empty($presenter_station_show)) {
             $station_show_id = $presenter_station_show['station_show_id'];
             $start_time = $from . " " . $presenter_station_show['start_time'];
-            $end_time = $from . " " . $presenter_station_show['end_time'];
+            $end_time = $to . " " . $presenter_station_show['end_time'];
             $show_transactions = TransactionHistories::getShowTransactions($station_show_id, $start_time, $end_time);
             $transaction_total = TransactionHistories::getTransactionTotal($station_show_id, $start_time, $end_time)['total'];
             $transaction_count = count($show_transactions);
