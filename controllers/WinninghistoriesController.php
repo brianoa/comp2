@@ -164,6 +164,9 @@ class WinninghistoriesController extends Controller
             $presenter_show = StationShowPresenters::jackpotShow($station_show_id);
         } else if ($admin_draw == 3) {
             $presenter_show = StationShowPresenters::adminStationShow($station_show_id, strtolower(date("l", strtotime($from))));
+        } else if ($admin_draw == 4) {
+
+            $presenter_show = StationShowPresenters::jackpotShow($station_show_id);
         } else {
             $presenter_show = StationShowPresenters::presenterStationShow($presenter_id, strtolower(date("l")));
         }
@@ -173,6 +176,8 @@ class WinninghistoriesController extends Controller
             $response['message'] = "PRESENTER MUST BE ADMIN";
         }
         if ($admin_draw == 2) {
+            $show_prize = StationShowPrizes::getShowPrize(strtolower(date("l", strtotime($today))), $station_show_id, $prize_id, $today);
+        } else if ($admin_draw == 4) {
             $show_prize = StationShowPrizes::getShowPrize(strtolower(date("l", strtotime($today))), $station_show_id, $prize_id, $today);
         } else {
             $show_prize = StationShowPrizes::getShowPrize(strtolower(date("l", strtotime($from))), $station_show_id, $prize_id, $from);
@@ -189,7 +194,9 @@ class WinninghistoriesController extends Controller
             if ($admin_draw == "2") {
                 $transaction_history = TransactionHistories::pickJackpot($past_winners, $from, $to, $presenter_show['station_id']);
             } else if ($admin_draw == "3") {
-                $transaction_history = TransactionHistories::pickRandomWinnerFromTopPlayers($station_show_id, $past_winners, $from);
+                $transaction_history = TransactionHistories::pickWinnerFromTopPlayers($station_show_id, $past_winners, $from, $to);
+            } else if ($admin_draw == "4") {
+                $transaction_history = TransactionHistories::pickStationTopPlayer($past_winners, $from, $to, $presenter_show['station_id']);
             } else {
                 $transaction_history = TransactionHistories::pickRandom($station_show_id, $past_winners, $from);
             }
@@ -224,7 +231,7 @@ class WinninghistoriesController extends Controller
                             $to_pay = $show_prize['amount'];
                         }
                         $dup_check = Disbursements::checkDuplicate($win_key, $transaction_history['reference_phone'], $to_pay);
-                        if ($dup_check == 0 && $admin_draw != 2 && $admin_draw != 3) {
+                        if ($dup_check == 0 && $admin_draw != 2 && $admin_draw != 3 && $admin_draw != 4) {
                             if ($show_prize['mpesa_disbursement']) {
                                 Disbursements::saveDisbursement($win_key, $transaction_history['reference_name'], $transaction_history['reference_phone'], $to_pay, "winning", 0, $transaction_history['station_id']);
                             } else {

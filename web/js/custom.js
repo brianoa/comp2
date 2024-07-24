@@ -87,6 +87,7 @@ function drawPrize(
   admin_draw,
   to
 ) {
+  console.log("ADMIN DRAW", admin_draw);
   var r = confirm("Are you sure you want to draw");
   if (r == true) {
     $.post(

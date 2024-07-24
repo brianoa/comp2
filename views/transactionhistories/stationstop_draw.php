@@ -7,14 +7,16 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\TransactionHistoriesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'SHOW TOP PLAYER DRAWS';
+$d = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
+$this->title = 'STATION TOP PLAYER DRAW';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="transaction-histories-index">
     <div class="row">
         <div class="col-md-12">
             <?php
-            $action = '/transactionhistories/showtopdraws';
+            $action = '/transactionhistories/stationstopdraws';
             $id = str_replace("/", "", $action);
             echo Html::beginForm(
                 $action = yii\helpers\Url::base() . $action,
@@ -22,35 +24,50 @@ $this->params['breadcrumbs'][] = $this->title;
                 $hmtmlOptions = array('class' => 'form form-inline')
             );
             ?>
+            <!-- #region -->
+            <div class="panel panel-info w-100">
+                <div class="panel-heading"> Filters</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="station">STATION:&nbsp;&nbsp; </label>
+                                <?= Html::dropDownList("show_id", $show_id, $shows, ['prompt' => '--Select--', 'class' => 'form-control']) ?>
+                            </div>
+                        </div>
 
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="criterion">CRITERION:&nbsp;&nbsp; </label>
+                                <?= Html::dropDownList("criterion", null, ['weekly' => 'Weekly', 'monthly' => 'Monthly', 'range' => 'Range'], ['prompt' => '--Select--', 'class' => 'form-control', 'id' => 'criterion-select']) ?>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label for="show_id">Show:</label>
-                <?= Html::dropDownList('show_id', $show_id, $shows, ['prompt' => '--Select Show--', 'class' => 'form-control']) ?>
-            </div>
-            <div class="form-group">
-                <label for="from_date">From Date:</label>
-                <?= yii\jui\DatePicker::widget([
-                    'name' => 'from',
-                    'value' => (!empty($from) ? $from : date("Y-m-d")),
-                    // 'value' => $from_date,
-                    'dateFormat' => 'yyyy-MM-dd',
-                    'options' => ['class' => 'form-control']
-                ]) ?>
-            </div>
-            <div class="form-group">
-                <label for="to_date">To Date:</label>
-                <?= yii\jui\DatePicker::widget([
-                    'name' => 'to',
-                    'value' => (!empty($to) ? $to : date("Y-m-d")),
-                    'dateFormat' => 'yyyy-MM-dd',
-                    'options' => ['class' => 'form-control']
-                ]) ?>
+                    <div class="row mt-4" id="date-range" style="display: none;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="from">FROM:&nbsp;&nbsp; </label>
+                                <?= Html::input('date', 'from', $from, ['class' => 'form-control']) ?>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="to">TO:&nbsp;&nbsp; </label>
+                                <?= Html::input('date', 'to', $to, ['class' => 'form-control']) ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-right">
+                            <?= Html::submitButton('<span class="glyphicon glyphicon-move"></span> Search &nbsp;&nbsp;', ['class' => 'btn btn-primary']) ?>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group m-4">
-                <?= Html::submitButton(' <span class="glyphicon glyphicon-move"></span> Search &nbsp;&nbsp;', ['class' => 'btn btn-primary']) ?>
-            </div>
             <br>
             <?php echo Html::endform();
             ?>
@@ -82,7 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="card text-dark bg-light mb-3">
                 <div class="card-body">
                     <?php
-                    if (!empty($presenter_station_show) && $presenter_station_show['is_admin']) {
+                    if (!empty($presenter_station_show)) {
                     ?>
                         <button class="btn btn-primary" onclick="runDraw()" type="button">DRAW WINNER</button>
                     <?php
@@ -110,6 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </thead>
                         <tbody>
                             <?php
+
                             if (count($recent_winners) > 0) {
                                 foreach ($recent_winners as $row) {
                             ?>
@@ -135,7 +153,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="percent_raised" style="display:none;"><?= $percent_raised; ?></div>
     <div id="percent_pending" style="display:none;"><?= $percent_pending; ?></div>
     <!--end of hidden divs -->
+
+
+
+
+
+
 </div>
+
+
+
+
 
 <!--  draw winner Modal    -->
 <div id="draw_winner_modal" class="modal fade" role="dialog">
@@ -171,7 +199,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $presenter_id = $presenter_station_show['presenter_id'];
                                     $prize_id = $row['prize_id'];
                                 ?>
-                                    <button id="<?= $row['prize_id']; ?>" class="btn btn-danger" onclick="drawPrize('<?= $station_show_id; ?>','<?= $presenter_id; ?>','<?= $prize_id; ?>','<?= $from; ?>',3,'<?= $to; ?>')" type="button"><?= $row['name']; ?></button>
+                                    <button id="<?= $row['prize_id']; ?>" class="btn btn-danger" onclick="drawPrize('<?= $station_show_id; ?>','<?= $presenter_id; ?>','<?= $prize_id; ?>','<?= $from; ?>',4,'<?= $to; ?>')" type="button"><?= $row['name']; ?></button>
                                 <?php
                                 }
                                 ?>
@@ -223,3 +251,17 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var criterionSelect = document.getElementById('criterion-select');
+        var dateRange = document.getElementById('date-range');
+
+        criterionSelect.addEventListener('change', function() {
+            if (this.value === 'range') {
+                dateRange.style.display = 'block';
+            } else {
+                dateRange.style.display = 'none';
+            }
+        });
+    });
+</script>

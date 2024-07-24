@@ -332,13 +332,97 @@ class TransactionhistoriesController extends Controller
             'percent_pending' => $percent_pending
         ]);
     }
-    public function actionTopplayerdraws($show_id = "", $from = "", $to = "")
+    public function actionStationstopdraws($station_id = "", $show_id = "", $from = "", $to = "")
+    {
+        $today = date('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
+
+        if (isset($_GET['criterion'])) {
+            switch ($_GET['criterion']) {
+                case 'weekly':
+                    $from = date('Y-m-d', strtotime('monday this week'));
+                    $to = date('Y-m-d', strtotime('sunday this week'));
+                    break;
+                case 'monthly':
+                    $from = date('Y-m-01');
+                    $d = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
+                    $to = date("Y-m-$d");
+                    break;
+                case 'range':
+                    if (isset($_GET['from']) && isset($_GET['to'])) {
+                        $from = $_GET['from'];
+                        $to = $_GET['to'];
+                        if (strtotime($to) < strtotime($from)) {
+                            Yii::$app->session->setFlash('error', 'Error: start date should be before the end date');
+                        }
+                    } else {
+                        $from = date('Y-m-01');
+                        $d = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
+                        $to = date("Y-m-$d");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        $shows = StationShows::getJackpotShows();
+        $presenter_station_show = [];
+        if (!empty($show_id)) {
+            $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
+        }
+
+        if (!empty($presenter_station_show)) {
+            $station_show_id = $presenter_station_show['station_show_id'];
+            $show_transactions = TransactionHistories::getJackpotTransactionsByStation($from, $to, $presenter_station_show['station_id']);
+            $transaction_total = TransactionHistories::getJackpotTransactionTotalByStation($from, $to, $presenter_station_show['station_id'])['total'];
+            $transaction_count = count($show_transactions);
+            $target_achievement = round(($transaction_total / $presenter_station_show['target']) * 100, 2);
+            $show_name = $presenter_station_show['show_name'] . " " . $from . " - " . $to;
+            $recent_winners = WinningHistories::getRecentWinners($presenter_station_show['station_show_id'], $today);
+            $show_prizes = StationShowPrizes::getShowPrizes(strtolower(date("l", strtotime($today))), $presenter_station_show['station_show_id'], $today);
+            $percent_raised = round(($transaction_total / $presenter_station_show['target']) * 100, 2);
+            $percent_pending = round((($presenter_station_show['target'] - $transaction_total) / $presenter_station_show['target']) * 100, 2);
+        } else {
+            $transaction_total = 0;
+            $transaction_count = 0;
+            $target_achievement = 0;
+            $show_name = "No draw at this moment";
+            $recent_winners = [];
+            $show_prizes = [];
+            $percent_raised = 0;
+            $percent_pending = 0;
+        }
+
+        $act = new \app\models\ActivityLog();
+        $act->desc = "Stationstop Draw";
+        $act->setLog();
+
+        return $this->render('stationstop_draw', [
+            'show_id' => $show_id,
+            'from' => $from,
+            'to' => $to,
+            'shows' => $shows,
+            'show_name' => $show_name,
+            'transaction_total' => $transaction_total,
+            'transaction_count' => $transaction_count,
+            'target_achievement' => $target_achievement,
+            'presenter_station_show' => $presenter_station_show,
+            'recent_winners' => $recent_winners,
+            'show_prizes' => $show_prizes,
+            'percent_raised' => $percent_raised,
+            'percent_pending' => $percent_pending,
+        ]);
+    }
+
+    public function actionShowtopdraws($show_id = "", $from = "", $to = "")
     {
         $today = date("Y-m-d H:i:s");
 
         $presenter = [];
         $presenter_station_show = [];
-        $shows = StationShows::getStationShows();
+        $shows = StationShows::getNonJackpotShows();
         if (!empty($show_id) && !empty($from) && !empty($to)) {
             $presenter_station_show = StationShowPresenters::adminStationShow($show_id, strtolower(date("l", strtotime($from))));
             // $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
@@ -369,7 +453,7 @@ class TransactionhistoriesController extends Controller
         //echo json_encode($show_prizes); exit();
 
         $act = new \app\models\ActivityLog();
-        $act->desc = "Top Player Draw";
+        $act->desc = "Show Top Draw";
         $act->setLog();
 
         return $this->render('topplayer_draws', [

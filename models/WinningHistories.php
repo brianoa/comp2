@@ -144,6 +144,8 @@ class WinningHistories extends \yii\db\ActiveRecord
             'notified' => 'Notified'
         ];
     }
+
+
     public static function distinctWinners($stationId, $frequency, $startDate)
     {
         $sql = "SELECT DISTINCT(reference_phone) AS phone FROM winning_histories WHERE station_id=:stationId AND created_at > DATE_SUB(:startDate, INTERVAL :frequency DAY)";

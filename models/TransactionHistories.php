@@ -193,23 +193,46 @@ class TransactionHistories extends \yii\db\ActiveRecord
             ->bindValue(':to_date', $to_date)
             ->queryOne();
     }
-    public static function pickRandomWinnerFromTopPlayers($station_show_id, $past_winners, $from_date)
+    public static function pickStationTopPlayer($past_winners, $from_date, $to_date, $station_id)
+    {
+        $past_winners_str = "'" . implode("','", $past_winners) . "'";
+
+        $sql = "SELECT reference_name, reference_phone,reference_code,station_id, station_show_id,amount, status, COUNT(reference_phone) AS play_count 
+            FROM transaction_histories 
+            WHERE station_id = :station_id 
+              AND created_at BETWEEN :from_date AND :to_date 
+              AND reference_phone NOT IN ($past_winners_str)
+            GROUP BY reference_phone
+            ORDER BY play_count DESC 
+            LIMIT 1
+        ";
+
+        return Yii::$app->db->createCommand($sql)
+            ->bindValue(':station_id', $station_id)
+            ->bindValue(':from_date', $from_date)
+            ->bindValue(':to_date', $to_date)
+            ->queryOne();
+    }
+
+    public static function pickWinnerFromTopPlayers($station_show_id, $past_winners, $from_date, $to_date)
     {
         $sql = "
             SELECT reference_name, reference_phone,reference_code,station_id, station_show_id,amount, status, COUNT(*) AS plays
             FROM transaction_histories
             WHERE station_show_id = :station_show_id
-                AND created_at > :from_date
+                AND created_at BETWEEN :from_date AND :to_date
                 AND reference_phone NOT IN (" . implode(',', $past_winners) . ")
-            GROUP BY reference_name, reference_phone, reference_code, station_id, station_show_id,amount, status
+            GROUP BY reference_phone
             ORDER BY plays DESC
-            LIMIT 20";
-        $top10Players = Yii::$app->db->createCommand($sql)
+            LIMIT 1";
+
+        $topPlayer = Yii::$app->db->createCommand($sql)
             ->bindValue(':station_show_id', $station_show_id)
             ->bindValue(':from_date', $from_date)
-            ->queryAll();
-        $randomWinnerIndex = rand(0, count($top10Players) - 1);
-        return $top10Players[$randomWinnerIndex];
+            ->bindValue(':to_date', $to_date)
+            ->queryOne();
+        // $randomWinnerIndex = rand(0, count($top10Players) - 1);
+        return $topPlayer;
     }
     public static function pickBonusWinners($station_show_id, $past_winners, $from_date, $limit)
     {

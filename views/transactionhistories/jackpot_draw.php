@@ -23,8 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 $hmtmlOptions = array('class' => 'form form-inline')
             );
             ?>
-
-
             <div class="form-group">
                 <label for="from">STATION SHOW:&nbsp;&nbsp; </label>
                 <?php
@@ -150,16 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="percent_pending" style="display:none;"><?= $percent_pending; ?></div>
     <!--end of hidden divs -->
 
-
-
-
-
-
 </div>
-
-
-
-
 
 <!--  draw winner Modal    -->
 <div id="draw_winner_modal" class="modal fade" role="dialog">

@@ -84,7 +84,10 @@ use luc\tourist\Tourist;
                             <?= Html::a('<i class="metismenu-icon fa fa-clock"></i> Jackpot Draws', ['/transactionhistories/jackpotdraw'], ['class' => '']) ?>
                         </li>
                         <li class="<?= in_array(Yii::$app->user->identity->email, Yii::$app->myhelper->getMembers(array(''), array(46))) ? '' : 'hidden' ?>  ">
-                            <?= Html::a('<i class="metismenu-icon fa fa-clock"></i> Top Player Draws', ['/transactionhistories/topplayerdraws'], ['class' => '']) ?>
+                            <?= Html::a('<i class="metismenu-icon fa fa-clock"></i> Show Top Draws', ['/transactionhistories/showtopdraws'], ['class' => '']) ?>
+                        </li>
+                        <li class="<?= in_array(Yii::$app->user->identity->email, Yii::$app->myhelper->getMembers(array(''), array(46))) ? '' : 'hidden' ?>  ">
+                            <?= Html::a('<i class="metismenu-icon fa fa-clock"></i> Stations Top Draws', ['/transactionhistories/stationstopdraws'], ['class' => '']) ?>
                         </li>
                         <li class="<?= in_array(Yii::$app->user->identity->email, Yii::$app->myhelper->getMembers(array(''), array(42))) ? '' : 'hidden' ?>  ">
                             <?= Html::a('<i class="metismenu-icon fa fa-clock"></i> Tv Draws', ['/transactionhistories/tvdraw'], ['class' => '']) ?>
