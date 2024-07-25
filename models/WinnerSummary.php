@@ -73,7 +73,7 @@ class WinnerSummary extends \yii\db\ActiveRecord
             'unique_field' => 'Unique Field',
         ];
     }
-    public static function getAwardedSummary($start_date,$end_date)
+    public static function getAwardedSummary($start_date,$end_date,$station=null)
     {
         $sql="select station_name,show_name,prize_name,show_timing,sum(awarded) as awarded from winner_summary
         where ";
@@ -82,14 +82,21 @@ class WinnerSummary extends \yii\db\ActiveRecord
                return '"' . $string . '"';
             }, \Yii::$app->myhelper->getStations()));
             $sql .=" `station_id` IN ($stations) AND ";
+        }if ($station) {
+            $sql .= " `station_id` = :station AND ";
         }
         $sql.="winning_date between :start_date and :end_date
         group by station_name,show_name,prize_name,show_timing";
-        return Yii::$app->analytics_db->createCommand($sql)
-        ->bindValue(':start_date',$start_date)
-        ->bindValue(':end_date',$end_date)
-        ->queryAll();
+        $command = Yii::$app->analytics_db->createCommand($sql)
+                ->bindValue(':start_date', $start_date)
+                ->bindValue(':end_date', $end_date);
+
+    if ($station) {
+        $command->bindValue(':station', $station);
     }
+
+    return $command->queryAll();
+}
     public static function checkDuplicate($unique_field)
     {
         return WinnerSummary::find()->where("unique_field='$unique_field'")->one();

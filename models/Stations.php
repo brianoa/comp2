@@ -80,6 +80,19 @@ class Stations extends \yii\db\ActiveRecord
         }
         return $list;
     }
+    public static function getFilterstations()
+{
+    if (\Yii::$app->myhelper->isStationManager()) {
+        $records = Stations::find()
+            ->where(['IN', 'id', \Yii::$app->myhelper->getStations()])
+            ->andWhere(['enabled' => 1])
+            ->all();
+    } else {
+        $records = Stations::findAll(['enabled' => 1]);
+    }
+
+    return $records;
+}
     public static function getStationResult($from_time)
     {
         $response=array();

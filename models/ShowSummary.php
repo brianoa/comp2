@@ -67,7 +67,7 @@ class ShowSummary extends \yii\db\ActiveRecord
     {
         return ShowSummary::find()->where("report_date='$report_date'")->andWhere("station_show_id='$station_show_id'")->one();
     }
-    public static function getShowSummary($start_date,$end_date)
+    public static function getShowSummary($start_date,$end_date, $station = null)
     {
          $sql="SELECT station_name,station_show_name,COALESCE(SUM(total_revenue),0) AS revenue,COALESCE(SUM(total_commission),0) AS commission,
             COALESCE(SUM(total_payouts),0) AS payout FROM show_summary WHERE ";
@@ -77,14 +77,22 @@ class ShowSummary extends \yii\db\ActiveRecord
                 }, \Yii::$app->myhelper->getStations()));
                 $sql .=" `station_id` IN ($stations) AND ";
             }
-        $sql .=" report_date BETWEEN  :start_date AND :end_date GROUP BY station_show_id,station_name,station_show_name ORDER BY 
-            revenue DESC";
-        return Yii::$app->analytics_db->createCommand($sql)
-        ->bindValue(':start_date',$start_date)
-        ->bindValue(':end_date',$end_date)
-        #->bindValue(":stations",$stations)
-        ->queryAll();
-    }
+            if ($station) {
+                $sql .= " `station_id` = :station AND ";
+            }
+            $sql .= " report_date BETWEEN :start_date AND :end_date
+            GROUP BY station_show_id, station_name, station_show_name
+            ORDER BY revenue DESC";
+            $command = Yii::$app->analytics_db->createCommand($sql)
+            ->bindValue(':start_date', $start_date)
+            ->bindValue(':end_date', $end_date);
+
+            if ($station) {
+                $command->bindValue(':station', $station);
+            }
+            return $command->queryAll();
+        }
+
     public static function logShowSummary($start_date=NULL)
     {
         if(date("H")=="00")

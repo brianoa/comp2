@@ -420,16 +420,17 @@ class ReportController extends Controller{
     public function actionShowsummary()
     {
         $start_date= date('Y-m-d');
+        $station = isset($_GET['station']) ? $_GET['station'] : null;
         $end_date = $start_date;
         if ( isset( $_GET['criterion'] ) && $_GET['criterion'] == 'daily' ) {
             $start_date= date('Y-m-d');
             $end_date = $start_date;
-            $response=ShowSummary::getShowSummary($start_date,$end_date);
+            $response=ShowSummary::getShowSummary($start_date,$end_date,$station);
         } elseif ( isset( $_GET['criterion'] ) && $_GET['criterion'] == 'monthly' ) {
             $start_date= date('Y-m-01');
             $d=cal_days_in_month(CAL_GREGORIAN,date('m'),date('Y'));
             $end_date = date("Y-m-$d");
-            $response=ShowSummary::getShowSummary($start_date,$end_date);
+            $response=ShowSummary::getShowSummary($start_date,$end_date,$station);
         } elseif ( isset( $_GET['criterion'] ) && $_GET['criterion'] == 'range' ) {
                 if ( isset( $_GET['from'] ) && isset( $_GET['to'] ) ) {
                         $end_date       = $_GET['to'];
@@ -439,19 +440,20 @@ class ReportController extends Controller{
                         if ( $date1 < $date2 ) {
                                 Yii::$app->session->setFlash('error', 'Error: start date should be before the end date' );
                         }
-                        $response=ShowSummary::getShowSummary($start_date,$end_date);
+                        $response=ShowSummary::getShowSummary($start_date,$end_date,$station);
                 } else {
                     $start_date= date('Y-m-01');
                     $d=cal_days_in_month(CAL_GREGORIAN,date('m'),date('Y'));
                     $end_date = date("Y-m-$d");
-                    $response=ShowSummary::getShowSummary($start_date,$end_date);
+                    $response=ShowSummary::getShowSummary($start_date,$end_date,$station);
                 }
         } else {
-            $response=ShowSummary::getShowSummary($start_date,$end_date);
+            $response=ShowSummary::getShowSummary($start_date,$end_date,$station);
         }
         return $this->render('show_summary', [
             'start_date' => $start_date,
             'end_date' => $end_date,
+            'stations' => Stations::getStations(),
             'response' => $response
             ]);
     }
@@ -627,7 +629,8 @@ class ReportController extends Controller{
             $start_date=(isset($_GET['from'])?$_GET['from']:date("Y-m-d"));
             $end_date=(isset($_GET['to'])?date('Y-m-d', strtotime($_GET['to']. ' + 1 day')):date("Y-m-d",strtotime("+1 day",time())));
         }
-        $data=WinnerSummary::getAwardedSummary($start_date,$end_date);
+        $station = isset($_GET['station']) ? $_GET['station'] : null;
+        $data=WinnerSummary::getAwardedSummary($start_date,$end_date,$station);
         $act = new \app\models\ActivityLog();
         $act -> desc = "daily_awarding report";
         $act ->setLog();
@@ -679,7 +682,8 @@ class ReportController extends Controller{
             $start_date=(isset($_GET['from'])?$_GET['from']:date("Y-m-d"));
             $end_date=(isset($_GET['to'])?$_GET['to']:date("Y-m-d"));
         }
-        $resp=RevenueReport::getRevenueReport($start_date,$end_date);
+        $station = isset($_GET['station']) ? $_GET['station'] : null;
+        $resp=RevenueReport::getRevenueReport($start_date,$end_date,$station);
         $act = new \app\models\ActivityLog();
         $act -> desc = "revenue report";
         $act ->setLog();

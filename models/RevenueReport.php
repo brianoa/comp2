@@ -56,7 +56,7 @@ class RevenueReport extends \yii\db\ActiveRecord
             'net_revenue' => 'Net Revenue',
         ];
     }
-    public static function getRevenueReport($start_date, $end_date)
+    public static function getRevenueReport($start_date, $end_date,$station = null)
     {
         $sql = RevenueReport::find()->where("revenue_date >= '$start_date'")->andWhere("revenue_date <='$end_date'");
         if (\Yii::$app->myhelper->isStationManager()) {
@@ -65,7 +65,11 @@ class RevenueReport extends \yii\db\ActiveRecord
             }, \Yii::$app->myhelper->getStations()));
             $sql->andWhere("station_id IN ($stations)");
         }
-        return $sql->orderBy("revenue_date DESC")->all();
+        if ($station) {
+            $sql->andWhere(['station_id' => $station]);
+        }
+    
+        return $sql->all();
     }
     public static function getDailyRevenues()
     {
