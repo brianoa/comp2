@@ -194,6 +194,8 @@ class WinninghistoriesController extends Controller
             if ($admin_draw == "2") {
                 $transaction_history = TransactionHistories::pickJackpot($past_winners, $from, $to, $presenter_show['station_id']);
             } else if ($admin_draw == "3") {
+                $from = $from." 00:00:00";
+                $to = $to." 23:59:59";
                 $transaction_history = TransactionHistories::pickWinnerFromTopPlayers($station_show_id, $past_winners, $from, $to);
             } else if ($admin_draw == "4") {
                 $transaction_history = TransactionHistories::pickStationTopPlayer($past_winners, $from, $to, $presenter_show['station_id']);
