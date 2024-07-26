@@ -197,15 +197,14 @@ class TransactionHistories extends \yii\db\ActiveRecord
     {
         $past_winners_str = "'" . implode("','", $past_winners) . "'";
 
-        $sql = "SELECT reference_name, reference_phone,reference_code,station_id, station_show_id,amount, status, COUNT(reference_phone) AS play_count 
+        $sql = "SELECT reference_name, reference_phone, reference_code, station_id, station_show_id, amount, status, COUNT(reference_phone) AS play_count 
             FROM transaction_histories 
             WHERE station_id = :station_id 
               AND created_at BETWEEN :from_date AND :to_date 
               AND reference_phone NOT IN ($past_winners_str)
-            GROUP BY reference_phone
+            GROUP BY reference_name, reference_phone, reference_code, station_id, station_show_id, amount, status
             ORDER BY play_count DESC 
-            LIMIT 1
-        ";
+            LIMIT 1";
 
         return Yii::$app->db->createCommand($sql)
             ->bindValue(':station_id', $station_id)
@@ -214,26 +213,27 @@ class TransactionHistories extends \yii\db\ActiveRecord
             ->queryOne();
     }
 
+
     public static function pickWinnerFromTopPlayers($station_show_id, $past_winners, $from_date, $to_date)
     {
-        $sql = "
-            SELECT reference_name, reference_phone,reference_code,station_id, station_show_id,amount, status, COUNT(*) AS plays
-            FROM transaction_histories
-            WHERE station_show_id = :station_show_id
-                AND created_at BETWEEN :from_date AND :to_date
-                AND reference_phone NOT IN (" . implode(',', $past_winners) . ")
-            GROUP BY reference_phone
-            ORDER BY plays DESC
-            LIMIT 1";
+        $sql = "SELECT reference_name, reference_phone, reference_code, station_id, station_show_id, amount, status, COUNT(*) AS plays
+        FROM transaction_histories
+        WHERE station_show_id = :station_show_id
+            AND created_at BETWEEN :from_date AND :to_date
+            AND reference_phone NOT IN (" . implode(',', $past_winners) . ")
+        GROUP BY reference_name, reference_phone, reference_code, station_id, station_show_id, amount, status
+        ORDER BY plays DESC
+        LIMIT 1";
 
         $topPlayer = Yii::$app->db->createCommand($sql)
             ->bindValue(':station_show_id', $station_show_id)
             ->bindValue(':from_date', $from_date)
             ->bindValue(':to_date', $to_date)
             ->queryOne();
-        // $randomWinnerIndex = rand(0, count($top10Players) - 1);
+
         return $topPlayer;
     }
+
     public static function pickBonusWinners($station_show_id, $past_winners, $from_date, $limit)
     {
         $sql = "SELECT count(reference_phone) as total,reference_phone,station_id FROM transaction_histories WHERE station_show_id=:station_show_id AND created_at >:from_date AND reference_phone NOT IN (" . implode(',', $past_winners) . ") group by reference_phone,station_id ORDER BY total DESC LIMIT $limit";
