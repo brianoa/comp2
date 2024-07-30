@@ -29,15 +29,15 @@ class StationshowsController extends Controller
         return [
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['create', 'update','index','delete','addpresenter','addprize','addcommissions'],
+                'only' => ['create', 'update', 'index', 'delete', 'addpresenter', 'addprize', 'addcommissions'],
                 'rules' => [
                     [
                         'actions' => ['create'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(8) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(8));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -45,9 +45,9 @@ class StationshowsController extends Controller
                         'actions' => ['update'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(9) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(9));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -55,9 +55,9 @@ class StationshowsController extends Controller
                         'actions' => ['index'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(11) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(11));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -65,9 +65,9 @@ class StationshowsController extends Controller
                         'actions' => ['delete'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(10) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(10));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -75,9 +75,9 @@ class StationshowsController extends Controller
                         'actions' => ['addpresenter'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(12) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(12));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -85,9 +85,9 @@ class StationshowsController extends Controller
                         'actions' => ['addprize'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(14) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(14));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -95,9 +95,9 @@ class StationshowsController extends Controller
                         'actions' => ['addcommissions'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-                            if ( ! Yii::$app->user->isGuest ) {
-                                $users = Yii::$app->myhelper->getMembers( array( '' ), array(16) );
-                                return in_array( Yii::$app->user->identity->email, $users );
+                            if (!Yii::$app->user->isGuest) {
+                                $users = Yii::$app->myhelper->getMembers(array(''), array(16));
+                                return in_array(Yii::$app->user->identity->email, $users);
                             }
                         }
                     ],
@@ -120,7 +120,7 @@ class StationshowsController extends Controller
     {
         $searchModel = new StationShowsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -136,65 +136,67 @@ class StationshowsController extends Controller
     public function actionView($id)
     {
         $searchModel = new StationShowPresentersSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$id);
-        
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id);
+
         $prizeSearchModel = new StationShowPrizesSearch();
-        $prizeDataProvider = $prizeSearchModel->search(Yii::$app->request->queryParams,$id);
-        
+        $prizeDataProvider = $prizeSearchModel->search(Yii::$app->request->queryParams, $id);
+
         $commissionsSearchModel = new \app\models\StationShowCommissionsSearch();
-        $commissionsDataProvider = $commissionsSearchModel->search(Yii::$app->request->queryParams,$id);
-        
+        $commissionsDataProvider = $commissionsSearchModel->search(Yii::$app->request->queryParams, $id);
+
         $act = new \app\models\ActivityLog();
-        $act -> desc = "stationshows view";
-        $act -> propts = "'{id:$id }'";
-        $act ->setLog();
-        
+        $act->desc = "stationshows view";
+        $act->propts = "'{id:$id }'";
+        $act->setLog();
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'prizeSearchModel'=>$prizeSearchModel,
-            'prizeDataProvider'=>$prizeDataProvider,
+            'prizeSearchModel' => $prizeSearchModel,
+            'prizeDataProvider' => $prizeDataProvider,
             'commissionsSearchModel' => $commissionsSearchModel,
-            'commissionsDataProvider'=>$commissionsDataProvider
+            'commissionsDataProvider' => $commissionsDataProvider
         ]);
     }
     /**
      * 
      */
-    public function actionAddpresenter($id,$rs=1){
+    public function actionAddpresenter($id, $rs = 1)
+    {
         $model = $this->findModel($id);
-        if(StationShowPresenters::find()->where("station_show_id =  '$id'")->andWhere("presenter_id = '{$_POST['presenter_id']}'")->one()){
+        if (StationShowPresenters::find()->where("station_show_id =  '$id'")->andWhere("presenter_id = '{$_POST['presenter_id']}'")->one()) {
             Yii::$app->session->setFlash('error', 'Error:  Duplicate presenter');
-        }else{
+        } else {
             $ShowPresenter = new StationShowPresenters();
-            $ShowPresenter->id=Uuid::generate()->string;
-            $ShowPresenter -> station_id = $model->stations->id;
-            $ShowPresenter -> station_show_id = $id;
+            $ShowPresenter->id = Uuid::generate()->string;
+            $ShowPresenter->station_id = $model->stations->id;
+            $ShowPresenter->station_show_id = $id;
             $ShowPresenter->presenter_id = $_POST['presenter_id'];
             $ShowPresenter->created_at = date('Y-m-d H:i:s');
             $ShowPresenter->save();
             $act = new \app\models\ActivityLog();
-            $act -> desc = "stationshow addpresenter";
-            $act -> propts = "'{id:$ShowPresenter->id }'";
-            $act ->setLog();
+            $act->desc = "stationshow addpresenter";
+            $act->propts = "'{id:$ShowPresenter->id }'";
+            $act->setLog();
         }
-        return $this->redirect(['view', 'id' => $id,'rs' => $rs]);
+        return $this->redirect(['view', 'id' => $id, 'rs' => $rs]);
     }
     /**
      * 
      */
-    public function actionAddprize($id,$rs){
+    public function actionAddprize($id, $rs)
+    {
         $model = $this->findModel($id);
-        if($_POST['showprizeid'] == ""):
+        if ($_POST['showprizeid'] == "") :
             $ShowPrize = new StationShowPrizes();
-            $ShowPrize->id=Uuid::generate()->string;
+            $ShowPrize->id = Uuid::generate()->string;
         else :
             $ShowPrize = StationShowPrizes::findOne($_POST['showprizeid']);
         endif;
-        
-        $ShowPrize -> station_id = $model->stations->id;
-        $ShowPrize -> station_show_id = $id;
+
+        $ShowPrize->station_id = $model->stations->id;
+        $ShowPrize->station_show_id = $id;
         $ShowPrize->draw_count = $_POST['draw_count'];
         $ShowPrize->monday = $_POST['monday'];
         $ShowPrize->tuesday = $_POST['tuesday'];
@@ -207,30 +209,31 @@ class StationshowsController extends Controller
         $ShowPrize->created_at = date('Y-m-d H:i:s');
         $ShowPrize->save();
         $act = new \app\models\ActivityLog();
-        $act -> desc = "stationshow addprize";
-        $act -> propts = "'{id:$ShowPrize->id }'";
-        $act ->setLog();
-        return $this->redirect(['view', 'id' => $id,'rs' => $rs]);
+        $act->desc = "stationshow addprize";
+        $act->propts = "'{id:$ShowPrize->id }'";
+        $act->setLog();
+        return $this->redirect(['view', 'id' => $id, 'rs' => $rs]);
     }
 
     /**
      * add commissions
      */
-    public function actionAddcommissions($id,$rs=1){
+    public function actionAddcommissions($id, $rs = 1)
+    {
         $model = $this->findModel($id);
         $ShowCommissions = new StationShowCommissions();
-        $ShowCommissions->id=Uuid::generate()->string;
-        $ShowCommissions -> station_id = $model->stations->id;
-        $ShowCommissions -> station_show_id = $id;
+        $ShowCommissions->id = Uuid::generate()->string;
+        $ShowCommissions->station_id = $model->stations->id;
+        $ShowCommissions->station_show_id = $id;
         $ShowCommissions->perm_group = $_POST['perm_group'];
         $ShowCommissions->commission = $_POST['commission'];
         $ShowCommissions->created_at = date('Y-m-d H:i:s');
         $ShowCommissions->save();
         $act = new \app\models\ActivityLog();
-        $act -> desc = "stationshow addcommission";
-        $act -> propts = "'{id:$ShowCommissions->id }'";
-        $act ->setLog();
-        return $this->redirect(['view', 'id' => $id,'rs' => $rs]);
+        $act->desc = "stationshow addcommission";
+        $act->propts = "'{id:$ShowCommissions->id }'";
+        $act->setLog();
+        return $this->redirect(['view', 'id' => $id, 'rs' => $rs]);
     }
     /**
      * Creates a new StationShows model.
@@ -240,17 +243,56 @@ class StationshowsController extends Controller
     public function actionCreate()
     {
         $model = new StationShows();
-
-        if ($model->load(Yii::$app->request->post()) ) {
-            
-            $model->id=Uuid::generate()->string;
+        $req = Yii::$app->request->post();
+        if ($model->load($req)) {
+            $model->id = Uuid::generate()->string;
+            $model->start_time = !empty($req['StationShows']['start_time']) ? $req['StationShows']['start_time'] : null;
+            $model->end_time = !empty($req['StationShows']['end_time']) ? $req['StationShows']['end_time'] : null;
             $model->created_at = date('Y-m-d H:i:s');
-            $model->save(false);
-            $act = new \app\models\ActivityLog();
-            $act -> desc = "stationshow create";
-            $act -> propts = "'{id:$model->id }'";
-            $act ->setLog();
-            return $this->redirect(['view', 'id' => $model->id]);
+            $model->start_date = !empty($req['StationShows']['start_date']) ? $req['StationShows']['start_date'] : null;
+            $model->end_date = !empty($req['StationShows']['end_date']) ? $req['StationShows']['end_date'] : null;
+
+            $shows = StationShows::getshows($req['StationShows']['station_id']);
+            $new_show = [
+                "start_time" => $model->start_time,
+                "end_time" => $model->end_time,
+                "days" => [
+                    "monday" => $model->monday,
+                    "tuesday" => $model->tuesday,
+                    "wednesday" => $model->wednesday,
+                    "thursday" => $model->thursday,
+                    "friday" => $model->friday,
+                    "saturday" => $model->saturday,
+                    "sunday" => $model->sunday
+                ]
+            ];
+
+            $enabled_days = [
+                "monday" => $model->monday,
+                "tuesday" => $model->tuesday,
+                "wednesday" => $model->wednesday,
+                "thursday" => $model->thursday,
+                "friday" => $model->friday,
+                "saturday" => $model->saturday,
+                "sunday" => $model->sunday
+            ];
+
+            foreach ($enabled_days as $day => $enabled) {
+                if ($enabled == 1 && StationShows::isConflict($new_show, $shows, $day)) {
+                    Yii::$app->session->setFlash('error', "Show conflict detected on $day. Could not add show.");
+                    return $this->render('create', [
+                        'model' => $model,
+                    ]);
+                }
+            }
+
+            if ($model->save(false)) {
+                $act = new \app\models\ActivityLog();
+                $act->desc = "stationshow create";
+                $act->propts = "'{id:$model->id }'";
+                $act->setLog();
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('create', [
@@ -271,9 +313,9 @@ class StationshowsController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $act = new \app\models\ActivityLog();
-            $act -> desc = "stationshow update";
-            $act -> propts = "'{id:$model->id }'";
-            $act ->setLog();
+            $act->desc = "stationshow update";
+            $act->propts = "'{id:$model->id }'";
+            $act->setLog();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -293,9 +335,9 @@ class StationshowsController extends Controller
     {
         $this->findModel($id)->delete();
         $act = new \app\models\ActivityLog();
-         $act -> desc = "stationshow delete";
-         $act -> propts = "'{id:$id }'";
-         $act ->setLog();
+        $act->desc = "stationshow delete";
+        $act->propts = "'{id:$id }'";
+        $act->setLog();
         return $this->redirect(['index']);
     }
 

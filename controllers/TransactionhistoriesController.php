@@ -287,6 +287,7 @@ class TransactionhistoriesController extends Controller
         $presenter_station_show = [];
         $shows = StationShows::getJackpotShows();
         if (!empty($show_id) && !empty($from) && !empty($to)) {
+
             $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
         }
         if (!empty($presenter_station_show)) {
@@ -370,7 +371,8 @@ class TransactionhistoriesController extends Controller
         $shows = StationShows::getJackpotShows();
         $presenter_station_show = [];
         if (!empty($show_id)) {
-            $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
+            $presenter_station_show = StationShowPresenters::adminStationShow($show_id, strtolower(date("l", strtotime($from))));
+            // $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
         }
 
         if (!empty($presenter_station_show)) {

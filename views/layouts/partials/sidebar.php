@@ -239,24 +239,6 @@ use luc\tourist\Tourist;
                     </ul>
                 </li>
 
-                <li class="" title="User Guides/Documentation and FAQs" data-content="This is a link to documents that are associated with this system and frequently asked questions(FAQs).">
-
-                    <?= Html::a('<i class="metismenu-icon fa fa-list"></i> HELP <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>', "#", ['class' => '']) ?>
-                    <ul>
-                        <li>
-                            <a target="_blank">
-                                <i class="metismenu-icon pe-7s-graph2">
-                                </i>
-                                User Guide
-                            </a>
-                            <a target="_blank">
-                                <i class="metismenu-icon pe-7s-graph2">
-                                </i>
-                                FAQs
-                            </a>
-                        </li>
-                    </ul>
-                </li>
 
             </ul>
         </div>

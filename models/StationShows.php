@@ -101,6 +101,51 @@ class StationShows extends \yii\db\ActiveRecord
         }
         return $arr;
     }
+    public static function convertToMinutes($timeStr)
+    {
+        list($hours, $minutes) = explode(":", $timeStr);
+        return $hours * 60 + $minutes;
+    }
+    public static function isConflict($new_show, $shows, $day)
+    {
+        $new_start = self::convertToMinutes($new_show["start_time"]);
+        $new_end = self::convertToMinutes($new_show["end_time"]);
+
+        foreach ($shows as $show) {
+            if ($show["days"][$day] == 1) {
+                $existing_start = self::convertToMinutes($show["start_time"]);
+                $existing_end = self::convertToMinutes($show["end_time"]);
+
+                if ($new_start < $existing_end && $new_end > $existing_start) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public static function getshows($id)
+    {
+        $shows = StationShows::find()->where(["station_id" => $id])->all();
+        $shows_arr = [];
+        if ($shows !== NULL) {
+            foreach ($shows as $show) {
+                $shows_arr[] = [
+                    "start_time" => $show->start_time,
+                    "end_time" => $show->end_time,
+                    "days" => [
+                        "monday" => $show->monday,
+                        "tuesday" => $show->tuesday,
+                        "wednesday" => $show->wednesday,
+                        "thursday" => $show->thursday,
+                        "friday" => $show->friday,
+                        "saturday" => $show->saturday,
+                        "sunday" => $show->sunday
+                    ]
+                ];
+            }
+        }
+        return $shows_arr;
+    }
     /**
      * {@inheritdoc}
      */
