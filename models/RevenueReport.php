@@ -56,7 +56,7 @@ class RevenueReport extends \yii\db\ActiveRecord
             'net_revenue' => 'Net Revenue',
         ];
     }
-    public static function getRevenueReport($start_date, $end_date,$station = null)
+    public static function getRevenueReport($start_date, $end_date, $station = null)
     {
         $sql = RevenueReport::find()->where("revenue_date >= '$start_date'")->andWhere("revenue_date <='$end_date'");
         if (\Yii::$app->myhelper->isStationManager()) {
@@ -68,7 +68,7 @@ class RevenueReport extends \yii\db\ActiveRecord
         if ($station) {
             $sql->andWhere(['station_id' => $station]);
         }
-    
+
         return $sql->all();
     }
     public static function getDailyRevenues()
@@ -120,17 +120,39 @@ class RevenueReport extends \yii\db\ActiveRecord
         // exit;
         return $result;
     }
+    private static function convertYearMonthToMonthYear($yearMonth)
+    {
+        $months = [
+            '01' => 'Jan',
+            '02' => 'Feb',
+            '03' => 'Mar',
+            '04' => 'Apr',
+            '05' => 'May',
+            '06' => 'Jun',
+            '07' => 'Jul',
+            '08' => 'Aug',
+            '09' => 'Sep',
+            '10' => 'Oct',
+            '11' => 'Nov',
+            '12' => 'Dec',
+        ];
+
+        list($year, $month) = explode('-', $yearMonth);
+
+        return isset($months[$month]) ? $months[$month] . ' ' . $year : null;
+    }
     public static function getMonthlyRevenues()
     {
-        $startDate = new \DateTime();
-        $startDate->modify('-6 months');
-        $endDate = new \DateTime();
+        // Set the start and end date
+        $startDate = (new \DateTime())->modify('first day of -5 months')->setTime(0, 0);
+        $endDate = (new \DateTime())->modify('last day of this month')->setTime(23, 59, 59);
 
+        // Build the query
         $sql = RevenueReport::find()
-            ->select(['DATE_FORMAT(revenue_date, "%b %Y") as month_year', 'SUM(total_revenue) as total_revenue'])
-            ->where(['between', 'revenue_date', $startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-            ->groupBy(['month_year'])
-            ->orderBy(['month_year' => SORT_ASC]);
+            ->select(['DATE_FORMAT(revenue_date, "%Y-%m") as month_year', 'SUM(total_revenue) as total_revenue'])
+            ->where(['between', 'revenue_date', $startDate->format('Y-m-d H:i:s'), $endDate->format('Y-m-d H:i:s')])
+            ->groupBy(['DATE_FORMAT(revenue_date, "%Y-%m")'])
+            ->orderBy(['DATE_FORMAT(revenue_date, "%Y-%m")' => SORT_ASC]);
 
         if (\Yii::$app->myhelper->isStationManager()) {
             $stations = implode(",", array_map(function ($string) {
@@ -140,25 +162,41 @@ class RevenueReport extends \yii\db\ActiveRecord
         }
 
         // Fetch monthly revenue data
-        $monthlyRevenues = $sql
-            ->asArray()
-            ->all();
+        $monthlyRevenues = $sql->asArray()->all();
+
+        // Log the fetched monthly revenues for debugging
+        Yii::info($monthlyRevenues, 'debug');
 
         // Prepare a map for monthly revenues
         $revenueMap = [];
         foreach ($monthlyRevenues as $data) {
-            $revenueMap[$data['month_year']] = $data['total_revenue'];
+            // Use custom conversion method
+            $monthYear = self::convertYearMonthToMonthYear($data['month_year']);
+            if ($monthYear) {
+                Yii::info("Raw month-year: {$data['month_year']} - Formatted month-year: {$monthYear}", 'debug');
+                $revenueMap[$monthYear] = $data['total_revenue'];
+            }
         }
 
         // Prepare the results for the last 6 months
         $result = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $monthYear = date('M Y', strtotime("-$i month")); // Get last 6 months with year
+        $currentDate = new \DateTime();
+        $currentDate->modify('first day of this month'); // Start from the first day of the current month
+        for ($i = 0; $i < 6; $i++) {
+            $monthYear = $currentDate->format('M Y');
             $result[] = [
                 'month_year' => $monthYear,
                 'total_revenue' => isset($revenueMap[$monthYear]) ? $revenueMap[$monthYear] : 0  // Default to 0 if not set
             ];
+            $currentDate->modify('-1 month');
         }
+
+        // Reverse the results to start from the oldest month
+        $result = array_reverse($result);
+
+        // Log the final result for debugging
+        Yii::info($result, 'debug-final-result');
+
         return $result;
     }
 

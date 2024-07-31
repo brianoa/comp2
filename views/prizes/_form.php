@@ -18,12 +18,22 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'amount')->textInput() ?>
 
-    <?= $form->field($model, 'mpesa_disbursement')->dropDownList(['1'=>'Yes','0'=>'No'],['prompt'=>'--Select--']) ?>
-
-    <?= $form->field($model, 'enabled')->dropDownList(['1'=>'Yes','0'=>'No'],['prompt'=>'--Select--'])?>
-    <?= $form->field($model, 'enable_tax')->dropDownList(['1'=>'Yes','0'=>'No'],['prompt'=>'--Select--'])?>
     <?= $form->field($model, 'tax')->textInput() ?>
     <?= $form->field($model, 'disbursable_amount')->textInput() ?>
+    <div class="form-group">
+        <label>Allow:</label>
+        <div class="row">
+            <div class="col-md-3">
+                <?= $form->field($model, 'mpesa_disbursement')->checkbox(['label' => 'Mpesa Disbursable?']) ?>
+            </div>
+            <div class="col-md-3">
+                <?= $form->field($model, 'enabled')->checkbox(['label' => 'Enabled']) ?>
+            </div>
+            <div class="col-md-3">
+                <?= $form->field($model, 'enable_tax')->checkbox(['label' => 'Enable Tax']) ?>
+            </div>
+        </div>
+    </div>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-block btn-success']) ?>
     </div>

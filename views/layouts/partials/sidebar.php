@@ -224,22 +224,6 @@ use luc\tourist\Tourist;
                         </li>
                     </ul>
                 </li>
-
-
-                <li class="<?= $presentervisibility ?> <?= $managementvisibility ?> <?= $stationmanagementvisibility ?> <?= $customercarevisibility ?>" title="API Menu" data-content="API Documentation for the system. List and usage of different endpoints.">
-
-                    <?= Html::a('<i class="metismenu-icon fa fa-list"></i> API <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>', "#", ['class' => '']) ?>
-                    <ul>
-                        <li class="<?= $presentervisibility ?> <?= $managementvisibility ?> <?= $stationmanagementvisibility ?> <?= $customercarevisibility ?>">
-                            <?= Html::a('<i class="metismenu-icon fas fa-print"></i> API Documentation', Url::to(['/api-docs']), ['target' => '_blank']) ?>
-                        </li>
-                        <li class="<?= $presentervisibility ?> <?= $managementvisibility ?> <?= $stationmanagementvisibility ?> <?= $customercarevisibility ?>">
-                            <?= Html::a('<i class="metismenu-icon fa fa-user-secret"></i> API Users/Applications', Url::to(['/user/api-users'])) ?>
-                        </li>
-                    </ul>
-                </li>
-
-
             </ul>
         </div>
     </div>
