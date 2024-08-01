@@ -251,6 +251,18 @@ class StationshowsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->start_date = !empty($req['StationShows']['start_date']) ? $req['StationShows']['start_date'] : null;
             $model->end_date = !empty($req['StationShows']['end_date']) ? $req['StationShows']['end_date'] : null;
+            if (!empty($req['jackpot']) && $req['jackpot'] == 1) {
+                $model->jackpot = 1;
+                $model->monday = 0;
+                $model->tuesday = 0;
+                $model->wednesday = 0;
+                $model->thursday = 0;
+                $model->friday = 0;
+                $model->saturday = 0;
+                $model->sunday = 0;
+            } else {
+                $model->jackpot = 0;
+            }
 
             $shows = StationShows::getshows($req['StationShows']['station_id']);
             $new_show = [
