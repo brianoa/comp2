@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 $this->title = 'Home';
 ?>
@@ -56,34 +57,39 @@ $monthlyData = json_encode($monthlyData);
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="well well-lg" style="background-color: #FFFFFF">
-                    <kbd>Recent winners</kbd><br />
-                    <span>
-                        <?= GridView::widget([
-                            'dataProvider' => $dataProvider,
-                            // 'filterModel' => $searchModel,
-                            'layout' => "{items}",
-                            'columns' => [
-                                [
-                                    'attribute' => 'prizename',
-                                    'value'     => 'prizes.name'
-                                ],
-                                'reference_name',
-                                [
-                                    'attribute' => 'stationname',
-                                    'value'     => 'stations.name'
-                                ],
-                                [
-                                    'attribute' => 'stationshowname',
-                                    'value'     => 'stationshows.name'
-                                ],
-                                'amount',
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Recent Winners
+                    </div>
+                    <div class="card-body">
+                        <table id="datatablesSimple" class="table table-striped table-bordered display">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Prize</th>
+                                    <th>Reference</th>
+                                    <th>Station</th>
+                                    <th>S/Show</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($dataProvider->getModels() as $index => $model) : ?>
+                                    <tr>
+                                        <td><?= $index + 1 ?></td>
+                                        <td><?= Html::encode($model->prizes->name) ?></td>
+                                        <td><?= Html::encode($model->reference_name) ?></td>
+                                        <td><?= Html::encode($model->stations->name) ?></td>
+                                        <td><?= Html::encode($model->stationshows->name) ?></td>
+                                        <td><?= Html::encode($model->amount) ?></td>
 
-                            ],
-                        ]); ?>
-                    </span>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
             </div>
             <div class="col-md-3">
                 <div class="well well-lg" style="background-color: #C9F7F5">

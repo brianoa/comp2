@@ -16,12 +16,20 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'enabled')->dropDownList(app\models\Valuelist::getValuelistByType('yesno'),['prompt'=>'--Select--']) ?>
-
     <?= $form->field($model, 'station_code')->textInput(['maxlength' => true]) ?>
-    
-     <?= $form->field($model, 'frequency')->dropDownList(app\models\Valuelist::getValuelistByType('frequency'),['prompt'=>'--Select--']) ?>
 
+    <?= $form->field($model, 'frequency')->dropDownList(app\models\Valuelist::getValuelistByType('frequency'), ['prompt' => '--Select--']) ?>
+
+    <div class="form-group">
+        <label>Enable:</label>
+        <div class="row">
+            <div class="col-md-3">
+                <?= $form->field($model, 'enabled')->checkbox(['label' => 'Enabled']) ?>
+            </div>
+
+
+        </div>
+    </div>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-block btn-success']) ?>
     </div>

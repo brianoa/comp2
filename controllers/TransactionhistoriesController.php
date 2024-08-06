@@ -371,8 +371,8 @@ class TransactionhistoriesController extends Controller
         $shows = StationShows::getJackpotShows();
         $presenter_station_show = [];
         if (!empty($show_id)) {
-            $presenter_station_show = StationShowPresenters::adminStationShow($show_id, strtolower(date("l", strtotime($from))));
-            // $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
+            // $presenter_station_show = StationShowPresenters::adminStationShow($show_id, strtolower(date("l", strtotime($from))));
+            $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
         }
 
         if (!empty($presenter_station_show)) {

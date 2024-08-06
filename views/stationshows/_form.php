@@ -57,7 +57,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'start_time', ['options' => ['id' => 'starttime']])->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'end_time', ['options' => ['id' => 'endtime']])->textInput(['maxlength' => true]) ?>
-    <div class="form-group">
+    <div class="form-group" id="days-input">
         <label>DAYS:</label>
         <div class="row">
             <div class="col-md-3">
@@ -96,10 +96,12 @@ $(document).ready(function() {
         if ($('#jackpot').is(':checked')) {
             $('#conditionalFields').show();
             $('#starttime').hide();
+            $('#days-input').hide();
             $('#endtime').hide();
         } else {
             $('#conditionalFields').hide();
             $('#starttime').show();
+            $('#days-input').show();
             $('#endtime').show();
         }
     }
