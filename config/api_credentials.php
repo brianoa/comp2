@@ -4,6 +4,7 @@ define( 'COMP21_COKE','ip-172-31-14-172');
 define( 'COMP21_NET','ip-172-31-41-69');
 define( 'COMP21_DEV','ip-172-31-46-231');
 define( 'CMEDIA_COTZ','ip-172-31-42-43');
+define( 'TCB','ip-172-31-47-127');
 define( 'EFMTZ_COM','ip-172-31-33-137');
 define( 'BANDIKABANDUA','ip-172-31-39-249');
 define( 'MCHEZOBOMBA', 'ip-172-31-37-40');

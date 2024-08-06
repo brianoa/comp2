@@ -16,6 +16,10 @@ class DisburseJob extends BaseObject implements \yii\queue\JobInterface
         {
             Disbursements::tzPayout($this->id,"mchongo", $this->telco);
         }
+        if(in_array(gethostname(),[TCB]))
+        {
+            Disbursements::tzPayout($this->id,"tcb", $this->telco);
+        }
         if(in_array(gethostname(),[MCHEZOBOMBA]))
         {
             Disbursements::tzPayout($this->id,"bomba", $this->telco);
