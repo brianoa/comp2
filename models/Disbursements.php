@@ -350,24 +350,12 @@ class Disbursements extends \yii\db\ActiveRecord
         {
             if($telco == "vodacom")
             {
-                if($_SERVER["HTTP_HOST"] == "mshikoplus.com")
-                {
-                    $req["product"] = "tbc";
-                    $url = "https://api.mchezoradio.com/api/disbursevodacom";
-                }else{
-                    $url=VODA_PAY_URL;
-                }
+                $url=VODA_PAY_URL;
                 $req=json_encode($req);
                 $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
                 Myhelper::curlPost($req,$headers,$url);
             }else {
-                if($_SERVER["HTTP_HOST"] == "mshikoplus.com")
-                {
-                    $req["product"] = "tbc";
-                    $url = "https://api.mchezoradio.com/api/tzdisburse";
-                }else{
-                    $url=TIGO_PAY_URL;
-                }
+                $url=TIGO_PAY_URL;
                 $req=json_encode($req);
                 $headers=['Content-Type: application/json','Authorization:'.DEPOSIT_AUTHORIZATION];
                 var_dump(Myhelper::curlPost($req,$headers,$url));
