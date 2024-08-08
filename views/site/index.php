@@ -8,7 +8,6 @@ use yii\helpers\Html;
 $this->title = 'Home';
 ?>
 <?php
-
 $dailyLabels = json_encode($dailyLabels);
 $dailyData = json_encode($dailyData);
 $monthlyLabels = json_encode($monthlyLabels);
@@ -16,7 +15,6 @@ $monthlyData = json_encode($monthlyData);
 ?>
 <div class="site-index">
     <div class="body-content">
-
         <div class="row">
             <div class="col-md-3">
                 <div class="well well-lg text-dark" style="background-color: #FFFFFF">
@@ -78,10 +76,10 @@ $monthlyData = json_encode($monthlyData);
                                 <?php foreach ($dataProvider->getModels() as $index => $model) : ?>
                                     <tr>
                                         <td><?= $index + 1 ?></td>
-                                        <td><?= Html::encode($model->prizes->name) ?></td>
+                                        <td> <?= $model->prizes ? Html::encode($model->prizes->name) : 'Not Set' ?></td>
                                         <td><?= Html::encode($model->reference_name) ?></td>
-                                        <td><?= Html::encode($model->stations->name) ?></td>
-                                        <td><?= Html::encode($model->stationshows->name) ?></td>
+                                        <td> <?= $model->stations ? Html::encode($model->stations->name) : 'Not Set' ?></td>
+                                        <td> <?= $model->stationshows ? Html::encode($model->stationshows->name) : 'Not Set' ?></td>
                                         <td><?= Html::encode($model->amount) ?></td>
 
                                     </tr>

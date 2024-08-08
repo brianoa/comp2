@@ -43,7 +43,6 @@ class AdminAsset extends AssetBundle
         'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js',
         'js/demo/chart-area-demo.js',
         'js/demo/chart-bar-demo.js',
-        'js/demo/chart-pie-demo.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

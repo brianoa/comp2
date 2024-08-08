@@ -26,8 +26,6 @@ use yii\widgets\ActiveForm;
             <div class="col-md-3">
                 <?= $form->field($model, 'enabled')->checkbox(['label' => 'Enabled']) ?>
             </div>
-
-
         </div>
     </div>
     <div class="form-group">

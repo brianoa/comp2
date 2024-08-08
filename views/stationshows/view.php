@@ -276,7 +276,8 @@ echo Html::beginForm(
                 </div>
                 <div class="col-sm-12">
                     <b>Enabled</b>
-                    <?= Html::dropDownList('enabled', '', ['1' => 'Yes', '0' => 'No'], ['prompt' => '--Select--', 'id' => 'enabled', 'class' => 'form-control']) ?>
+                    <?= Html::hiddenInput('enabled', '0') ?>
+                    <?= Html::checkbox('enabled', 0, ['label' => 'Enable', 'id' => 'enabled']) ?>
                 </div>
             </div>
             <div class="modal-footer">

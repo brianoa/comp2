@@ -15,9 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Format revenues data
   revenues = revenues.map(formatNumber);
 
-  console.log("LABELS", months);
-  console.log("REVENUES", revenues);
-
   // Set new default font family and font color to mimic Bootstrap's default styling
   Chart.defaults.global.defaultFontFamily =
     '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
