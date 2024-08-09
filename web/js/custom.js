@@ -189,7 +189,7 @@ function editPrizeModal(
   $("#saturday").val(saturday);
   $("#sunday").val(sunday);
   $("#enabled").val(enabled);
-
+  $("#enabled").prop("checked", enabled == 1);
   $(".addprizespn").text("");
   $(".addprizespn").text("Edit prize");
 

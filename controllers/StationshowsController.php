@@ -205,7 +205,8 @@ class StationshowsController extends Controller
         $ShowPrize->friday = $_POST['friday'];
         $ShowPrize->saturday = $_POST['saturday'];
         $ShowPrize->sunday = $_POST['sunday'];
-        $ShowPrize->enabled = $_POST['enabled'];
+        // Handle the checkbox value properly
+        $ShowPrize->enabled = isset($_POST['enabled']) ? 1 : 0;
         $ShowPrize->created_at = date('Y-m-d H:i:s');
         $ShowPrize->save();
         $act = new \app\models\ActivityLog();

@@ -274,10 +274,11 @@ echo Html::beginForm(
                     <b>Sunday</b>
                     <?= Html::dropDownList('sunday', '', \app\models\Prizes::getPrizesList(), ['prompt' => '--Select--', 'class' => 'form-control', 'id' => 'sunday']) ?>
                 </div>
-                <div class="col-sm-12">
-                    <b>Enabled</b>
-                    <?= Html::hiddenInput('enabled', '0') ?>
-                    <?= Html::checkbox('enabled', 0, ['label' => 'Enable', 'id' => 'enabled']) ?>
+                <div class="col-sm-12 mt-3">                    
+                    <?= Html::checkbox('enabled', $model->enabled, [
+                        'label' => 'Enable',
+                        'id' => 'enabled'
+                    ]) ?>
                 </div>
             </div>
             <div class="modal-footer">
