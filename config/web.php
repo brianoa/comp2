@@ -55,6 +55,9 @@ $config = [
                 [
                     'class' => 'yii\log\EmailTarget',
                     'levels' => ['error'],
+                    'except' => [
+                        'yii\web\HttpException:404', // Skip 404 errors
+                    ],
                     'message' => [
                         'from' => [EMAIL_FROM => 'Codeshop'],
                         'to' => [EMAIL_TO],
