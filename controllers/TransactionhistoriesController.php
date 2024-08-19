@@ -534,6 +534,13 @@ class TransactionhistoriesController extends Controller
         $data = TransactionHistories::getTvTransactions($from, $to);
         $presenter_station_show = StationShowPresenters::jackpotShow($show_id);
         $show_prizes = StationShowPrizes::getShowPrizes(strtolower(date("l", strtotime($today))), $show_id, $today);
+        if (empty($show_prizes)) {
+            // Set a session flash message
+            Yii::$app->session->setFlash('error', 'No draws/prizes available for today\'s show.');
+            // Redirect back to the previous page
+            return Yii::$app->getResponse()->redirect(Yii::$app->request->referrer);
+        }
+
         $data = json_encode(explode(",", $data['numbers']));
         return $this->render('tv', [
             'data' => $data,
