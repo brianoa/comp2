@@ -352,6 +352,12 @@ class DisbursementsController extends Controller
             $row->save(false);
         }
     }
+    public function actionRegenerateid($id)
+    {
+        $data = Disbursements::findOne($id);
+        $data->id=Uuid::generate()->string;
+        $data->save(false);
+    }
     public function actionDisb($id){
         $model = $this->findModel($id);
         if ($model !== null) {
