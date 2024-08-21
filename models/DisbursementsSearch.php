@@ -17,7 +17,7 @@ class DisbursementsSearch extends Disbursements
     public function rules()
     {
         return [
-            [['id', 'reference_id', 'reference_name', 'phone_number', 'conversation_id', 'disbursement_type', 'transaction_reference', 'created_at', 'updated_at', 'deleted_at','station_id'], 'safe'],
+            [['id', 'reference_id', 'reference_name', 'phone_number', 'conversation_id', 'disbursement_type', 'transaction_reference', 'created_at', 'updated_at', 'deleted_at', 'station_id', 'ip_address', 'created_by'], 'safe'],
             [['amount'], 'number'],
             [['status'], 'integer'],
         ];
@@ -72,26 +72,28 @@ class DisbursementsSearch extends Disbursements
             ->andFilterWhere(['like', 'phone_number', $this->phone_number])
             ->andFilterWhere(['like', 'conversation_id', $this->conversation_id])
             ->andFilterWhere(['like', 'disbursement_type', $this->disbursement_type])
-            ->andFilterWhere(['like', 'transaction_reference', $this->transaction_reference]);
-        $today     = date( 'Y-m-d' );
-        $yesterday = date( 'Y-m-d', strtotime( '-1 day' ) );
-        if ( $daily ) {
-                $query->andWhere( "DATE(created_at)>= DATE('" . $yesterday . "')" );
-                $query->andWhere( "DATE(created_at)<= DATE('" . $today . "')" );
+            ->andFilterWhere(['like', 'transaction_reference', $this->transaction_reference])
+            ->andFilterWhere(['like', 'created_by', $this->created_by])
+            ->andFilterWhere(['like', 'ip_address', $this->ip_address]);
+        $today     = date('Y-m-d');
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
+        if ($daily) {
+            $query->andWhere("DATE(created_at)>= DATE('" . $yesterday . "')");
+            $query->andWhere("DATE(created_at)<= DATE('" . $today . "')");
         }
-        if ( $monthly ) {
-                $query->andWhere( "MONTH(created_at)= MONTH(CURDATE())" );
-                $query->andWhere( "YEAR(created_at)= YEAR(CURDATE())" );
+        if ($monthly) {
+            $query->andWhere("MONTH(created_at)= MONTH(CURDATE())");
+            $query->andWhere("YEAR(created_at)= YEAR(CURDATE())");
         }
-        if ( $from != null && $to != null ) {
-                $query->andWhere( "DATE(created_at)>= DATE('" . $from . "')" );
-                $query->andWhere( "DATE(created_at)<= DATE('" . $to . "')" );
+        if ($from != null && $to != null) {
+            $query->andWhere("DATE(created_at)>= DATE('" . $from . "')");
+            $query->andWhere("DATE(created_at)<= DATE('" . $to . "')");
         }
-        if(isset($_GET['t']) && $_GET['t'] == 'p'){
+        if (isset($_GET['t']) && $_GET['t'] == 'p') {
             $query->andWhere('disbursement_type = "presenter_commission"');
         }
-        if(\Yii::$app->myhelper->isStationManager()){
-           $query->andWhere(['IN','station_id', \Yii::$app->myhelper->getStations()]); 
+        if (\Yii::$app->myhelper->isStationManager()) {
+            $query->andWhere(['IN', 'station_id', \Yii::$app->myhelper->getStations()]);
         }
         $query->orderBy('created_at DESC');
         return $dataProvider;

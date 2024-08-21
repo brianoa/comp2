@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -17,6 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <th>PHONE NUMBER</th>
             <th>AMOUNT</th>
             <th>DISBURSEMENT TYPE</th>
+            <th>CREATED BY</th>
+            <th>IP ADDRESS</th>
             <th>CREATED AT</th>
             <th>STATUS</th>
         </tr>
@@ -30,6 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <td><?= Html::encode($disbursement->phone_number) ?></td>
                 <td><?= Html::encode($disbursement->amount) ?></td>
                 <td><?= Html::encode($disbursement->disbursement_type) ?></td>
+                <td><?= Html::encode($disbursement->created_by) ?></td>
+                <td><?= Html::encode($disbursement->ip_address) ?></td>
                 <td><?= Html::encode($disbursement->created_at) ?></td>
                 <td>
                     <?php
@@ -138,5 +143,3 @@ JS;
 
 $this->registerJs($script);
 ?>
-
-
