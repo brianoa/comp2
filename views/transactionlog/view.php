@@ -34,7 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'date',
             'api_type',
             'state',
-            'transID',
         ],
     ]) ?>
 

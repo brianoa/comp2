@@ -17,7 +17,7 @@ class TransactionLogSearch extends TransactionLog
     public function rules()
     {
         return [
-            [['id', 'json_data', 'date', 'api_type', 'transID'], 'safe'],
+            [['id', 'json_data', 'date', 'api_type'], 'safe'],
             [['state'], 'integer'],
         ];
     }
@@ -64,8 +64,7 @@ class TransactionLogSearch extends TransactionLog
 
         $query->andFilterWhere(['like', 'id', $this->id])
             ->andFilterWhere(['like', 'json_data', $this->json_data])
-            ->andFilterWhere(['like', 'api_type', $this->api_type])
-            ->andFilterWhere(['like', 'transID', $this->transID]);
+            ->andFilterWhere(['like', 'api_type', $this->api_type]);
 
         return $dataProvider;
     }

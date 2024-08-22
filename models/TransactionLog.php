@@ -12,7 +12,6 @@ use Yii;
  * @property string $date
  * @property string|null $api_type
  * @property int $state
- * @property string|null $transID
  */
 class TransactionLog extends \yii\db\ActiveRecord
 {
@@ -38,8 +37,7 @@ class TransactionLog extends \yii\db\ActiveRecord
             [['date'], 'safe'],
             [['state'], 'integer'],
             [['id'], 'string', 'max' => 36],
-            [['api_type'], 'string', 'max' => 20],
-            [['transID'], 'string', 'max' => 50]
+            [['api_type'], 'string', 'max' => 20]
         ];
     }
 
@@ -54,7 +52,6 @@ class TransactionLog extends \yii\db\ActiveRecord
             'date' => 'Date',
             'api_type' => 'Api Type',
             'state' => 'State',
-            'transID' => 'Trans ID',
         ];
     }
 }

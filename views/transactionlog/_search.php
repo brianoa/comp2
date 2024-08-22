@@ -25,7 +25,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'state') ?>
 
-    <?php // echo $form->field($model, 'transID') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
