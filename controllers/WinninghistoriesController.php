@@ -334,6 +334,16 @@ class WinninghistoriesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    public function actionDeleterecords()
+{
+   
+    $sql = "DELETE FROM winning_histories WHERE id IN ('c58ded10-5c9f-11ef-8943-515073e0cfc1', 'c6a21490-5c9f-11ef-9d9c-610c29285918', 'c7a71d90-5c9f-11ef-bf83-53581f832968', 'c8a82c10-5c9f-11ef-9561-3104e47cdb54','c9a25710-5c9f-11ef-a1ba-f3bb0807234d','ca8b8690-5c9f-11ef-b2bf-09bc3137b0bf','1fabd3a0-62eb-11ef-aa66-15698b56cb10',
+    '1c73af50-62eb-11ef-8449-53f6eced72e1','ff4fc350-62ea-11ef-97f2-7d8114b9dc05','fcca1790-62ea-11ef-9074-6f75b5ad882d','fa607200-62ea-11ef-8b9b-43ad171ef834','f7e6ab60-62ea-11ef-a4d6-3b43d681dacd','f4242cc0-62ea-11ef-8b1e-59e55af21201','f160bb50-62ea-11ef-889e-a35fbf6e49c8',
+    '2fea8160-621f-11ef-92e6-63294e4adc3b','36a5a980-621f-11ef-88c2-1ff875e638b8','395d5420-621f-11ef-828e-6f52dce2b921','422c3820-621f-11ef-9ee9-25d2fb233df3')";
+
+    Yii::$app->db->createCommand($sql)->execute();
+}
+
     public function beforeAction($action)
     {
         if ($action->id == '') {
