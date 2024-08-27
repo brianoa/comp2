@@ -1,6 +1,6 @@
 <?php
 $hostname = gethostname();
-if ((in_array($hostname, ['kuta', 'Walumbe', 'DESKTOP-C0VBI9T']))) {
+if ((in_array($hostname, ['kuta', 'Walumbe','wandia', 'DESKTOP-C0VBI9T']))) {
     // comment out the following two lines when deployed to production
     defined('YII_DEBUG') or define('YII_DEBUG', true);
     defined('YII_ENV') or define('YII_ENV', 'dev');
