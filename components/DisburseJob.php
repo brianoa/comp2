@@ -12,15 +12,15 @@ class DisburseJob extends BaseObject implements \yii\queue\JobInterface
     public function execute($queue)
     {
        
-        if(in_array(gethostname(),[CMEDIA_COTZ]))
+        if(APP_NAME == "mchongo")
         {
             Disbursements::tzPayout($this->id,"mchongo", $this->telco);
         }
-        if(in_array(gethostname(),[MCHEZOBOMBA]))
+        if(APP_NAME == "bomba")
         {
             Disbursements::tzPayout($this->id,"bomba", $this->telco);
         }
-        if(in_array(gethostname(),[MCHEZOSUPA])) 
+        if(APP_NAME == "supa") 
         {
             Disbursements::tzPayout($this->id,"supa", $this->telco);
         }
