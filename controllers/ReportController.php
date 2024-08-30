@@ -819,7 +819,7 @@ class ReportController extends Controller{
     }
     public function actionLogsitereport()
     {
-        Yii::$app->queue->push(new SiteReportJob());
+        Yii::$app->analyticsqueue->push(new SiteReportJob());
     }
     public function actionLasthour()
     {
@@ -849,7 +849,7 @@ class ReportController extends Controller{
     }
     public function actionLogshowsummary()
     {
-        Yii::$app->queue->push(new ShowSummaryJob());
+        Yii::$app->analyticsqueue->push(new ShowSummaryJob());
     }
     public function actionUpdateshow($start_date)
     {
@@ -857,7 +857,7 @@ class ReportController extends Controller{
     }
     public function actionLogcommission()
     {        
-        Yii::$app->queue->push(new LogCommissionJob());
+        Yii::$app->analyticsqueue->push(new LogCommissionJob());
     }
     public function actionShow($m,$y)
     {
@@ -872,7 +872,7 @@ class ReportController extends Controller{
     }
     public function actionLogawards()
     {        
-        Yii::$app->queue->push(new AwardsJob());
+        Yii::$app->analyticsqueue->push(new AwardsJob());
     }
     public function actionLogrevenue($date=NULL)
     {
@@ -888,7 +888,7 @@ class ReportController extends Controller{
         {
             $revenue_date= date('Y-m-d');
         }
-        Yii::$app->queue->push(new RevenueJob(['revenue_date'=>$revenue_date]));
+        Yii::$app->analyticsqueue->push(new RevenueJob(['revenue_date'=>$revenue_date]));
     }
     public function actionLogger($m,$y)
     {
