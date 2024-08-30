@@ -9,7 +9,7 @@ $analytics_db = require __DIR__ . '/analytics_db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log','queue'],
+    'bootstrap' => ['log','queue','analyticsqueue'],
     'defaultRoute' =>'site/index',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -77,6 +77,17 @@ $config = [
             'channel' => 'default', // Queue channel key
             'mutex' => [
                 'class'=>\yii\mutex\MysqlMutex::class, // Mutex used to sync queries
+                'db' => $sms_db // DB connection component or its config
+            ],
+            'ttr' => 43200,
+        ],
+        'analyticsqueue' => [
+            'class' => \yii\queue\db\Queue::class,
+            'db' => $sms_db, // DB connection component or its config
+            'tableName' => '{{%analytics_queue}}', // Table name
+            'channel' => 'default', // Queue channel key
+            'mutex' => [
+                'class' => \yii\mutex\MysqlMutex::class, // Mutex used to sync queries
                 'db' => $sms_db // DB connection component or its config
             ],
             'ttr' => 43200,
