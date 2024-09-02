@@ -178,7 +178,7 @@ class CommissionsController extends Controller
     public function actionProcess()
     {
         //today processing
-        Yii::$app->queue->push(new CommissionJob());
+        Yii::$app->analyticsqueue->push(new CommissionJob());
     }
     /**
      * Finds the Commissions model based on its primary key value.
