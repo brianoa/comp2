@@ -835,6 +835,10 @@ class ReportController extends Controller{
         }
         Yii::$app->queue->push(new LastHourJob(['the_day'=>$the_day,'hr'=>$hr]));
     }
+    public function actionSetreport()
+    {
+        SiteReport::setSiteReport();
+    }
     public function actionCleanhourly($log_date)
     {
         for($j=0;$j<24;$j++)
