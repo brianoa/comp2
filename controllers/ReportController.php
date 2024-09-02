@@ -894,6 +894,19 @@ class ReportController extends Controller{
         }
         Yii::$app->analyticsqueue->push(new RevenueJob(['revenue_date'=>$revenue_date]));
     }
+    public function actionDeletecommissionjobs()
+    {
+        // Execute the delete command using Yii's database connection
+        $rowsDeleted = Yii::$app->sms_db->createCommand()
+            ->delete('queue', ['like', 'job', 'CommissionJob'])
+            ->execute();
+
+        // Return a response to indicate the number of rows deleted
+        return $this->asJson([
+            'status' => 'success',
+            'message' => "$rowsDeleted rows deleted successfully.",
+        ]);
+    }
     public function actionLogger($m,$y)
     {
         
