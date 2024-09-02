@@ -833,7 +833,7 @@ class ReportController extends Controller{
             $the_day=date("Y-m-d");
             $hr=Myhelper::formatHour(date('H')-1);
         }
-        Yii::$app->queue->push(new LastHourJob(['the_day'=>$the_day,'hr'=>$hr]));
+        Yii::$app->analyticsqueue->push(new LastHourJob(['the_day'=>$the_day,'hr'=>$hr]));
     }
     public function actionSetreport()
     {
