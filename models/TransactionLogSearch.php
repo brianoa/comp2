@@ -45,7 +45,7 @@ class TransactionLogSearch extends TransactionLog
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['date' => SORT_DESC]),
         ]);
 
         $this->load($params);
