@@ -78,31 +78,30 @@ class OutboxController extends Controller
     }
     public function actionTzsms($limit)
     {
-
-        $smses=Outbox::tzOutbox($limit);
-        $rows=[];
-        $delete="";
-        for($i=0; $i<count($smses); $i++)
-        {
-            $outbox=$smses[$i];
-            $rows[]=[$outbox->id,$outbox->receiver,$outbox->sender,
-            $outbox->message,$outbox->station_id,$outbox->created_date,$outbox->category];
-            if($i==0)
-            {
-                $delete.="'$outbox->id'";
-            }
-            else
-            {
-                $delete.=",'$outbox->id'";
-            }
-            $channel=Myhelper::getSmsChannel($outbox->receiver);
-            Myhelper::sendTzSms($outbox->receiver,$outbox->message,SENDER_NAME,$channel,$outbox->id);
+        $smses = Outbox::tzOutbox($limit);
+        $rows = [];
+        $delete = [];
+    
+        for ($i = 0; $i < count($smses); $i++) {
+            $outbox = $smses[$i];
+            $rows[] = [$outbox->id, $outbox->receiver, $outbox->sender, $outbox->message, $outbox->station_id, $outbox->created_date, $outbox->category];
+            $delete[] = $outbox->id; 
+    
+            $channel = Myhelper::getSmsChannel($outbox->receiver);
+            Myhelper::sendTzSms($outbox->receiver, $outbox->message, SENDER_NAME, $channel, $outbox->id);
         }
-        $columns=['id','receiver','sender','message','station_id','created_date','category'];
-        Yii::$app->sms_db->createCommand()->batchInsert('sent_sms',$columns, $rows)->execute();
-        $delete_sql="DELETE FROM outbox WHERE id in ($delete)";
-        \Yii::$app->sms_db->createCommand($delete_sql)->execute(); 
+    
+       
+        $columns = ['id', 'receiver', 'sender', 'message', 'station_id', 'created_date', 'category'];
+        Yii::$app->sms_db->createCommand()->batchInsert('sent_sms', $columns, $rows)->execute();
+    
+       
+        if (!empty($delete)) {
+            $delete_sql = "DELETE FROM outbox WHERE id IN (" . implode(',', array_map('intval', $delete)) . ")";
+            \Yii::$app->sms_db->createCommand($delete_sql)->execute();
+        }
     }
+   
 
     /**
      * Creates a new Outbox model.
