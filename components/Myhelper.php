@@ -893,6 +893,10 @@ class Myhelper extends Component {
 						$toreplace       = ["[entryNumber]"];
 						$data['message'] = str_replace( $toreplace, $variables, $temp );
 						break;
+				case 'RFA/555':
+							$toreplace       = ["[entryNumber]"];
+							$data['message'] = str_replace( $toreplace, $variables, $temp );
+							break;
 				case '255/KONDE':
 							$toreplace       = ["[entryNumber]"];
 							$data['message'] = str_replace( $toreplace, $variables, $temp );
