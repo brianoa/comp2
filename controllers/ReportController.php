@@ -1220,7 +1220,7 @@ class ReportController extends Controller{
         }
         Yii::$app->end();
         ob_get_clean();
-    } 
+    }
     public function actionPlayerstatus($status)
     {
         // Define date ranges
@@ -1228,32 +1228,36 @@ class ReportController extends Controller{
         $threeMonthsAgo = (new \DateTime())->modify('-3 months')->format('Y-m-d H:i:s');
         $sixMonthsAgo = (new \DateTime())->modify('-6 months')->format('Y-m-d H:i:s');
         $twelveMonthsAgo = (new \DateTime())->modify('-12 months')->format('Y-m-d H:i:s');
-    
+
         // Determine the filename
         $filename = $status . '_players_' . date('Y-m-d_H-i-s') . '.csv';
-    
+
         // Set headers for the CSV download
         header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename=' . $filename);
         header('Pragma: no-cache');
         header('Expires: 0');
-    
+
+        // Disable output buffering to speed up downloads
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+
         // Open output stream for writing
         $output = fopen('php://output', 'w');
         fputcsv($output, ['MSISDN', 'Created At']);
-    
+
         // Fetch players in batches and export to CSV
         $this->fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMonthsAgo, $twelveMonthsAgo, $output);
-    
+
         fclose($output);
         exit;
     }
 
     private function fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMonthsAgo, $twelveMonthsAgo, $output)
     {
-        $batchSize = 10000; // Number of records to fetch per batch
+        $batchSize = 50000; // Increased batch size for larger chunks
         $offset = 0;
-
         $queries = [
             'active' => [
                 'query' => "SELECT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :threeMonthsAgo AND :today LIMIT :batchSize OFFSET :offset",
@@ -1290,13 +1294,11 @@ class ReportController extends Controller{
                 },
             ],
         ];
-
         if (!isset($queries[$status])) {
             throw new \yii\web\BadRequestHttpException('Invalid player status.');
         }
 
         $query = $queries[$status];
-
         // Use a loop to fetch players in batches
         while (true) {
             // Prepare query with batch size and offset
@@ -1311,15 +1313,15 @@ class ReportController extends Controller{
             if (empty($players)) {
                 break; // No more records, exit loop
             }
-
             if (isset($query['filter'])) {
                 $players = $query['filter']($players, $query['db'], $query['params']);
             }
 
-            // Write each batch to the output stream
             foreach ($players as $player) {
                 fputcsv($output, $player);
             }
+
+            flush();
 
             // Increment the offset for the next batch
             $offset += $batchSize;
