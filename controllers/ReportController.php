@@ -1222,106 +1222,96 @@ class ReportController extends Controller{
         ob_get_clean();
     }
     public function actionPlayerstatus($status)
-    {
+{
+    $today = (new \DateTime())->format('Y-m-d H:i:s');
+    $threeMonthsAgo = (new \DateTime())->modify('-3 months')->format('Y-m-d H:i:s');
+    $sixMonthsAgo = (new \DateTime())->modify('-6 months')->format('Y-m-d H:i:s');
+    $twelveMonthsAgo = (new \DateTime())->modify('-12 months')->format('Y-m-d H:i:s');
 
-        $today = (new \DateTime())->format('Y-m-d H:i:s');
-        $threeMonthsAgo = (new \DateTime())->modify('-3 months')->format('Y-m-d H:i:s');
-        $sixMonthsAgo = (new \DateTime())->modify('-6 months')->format('Y-m-d H:i:s');
-        $twelveMonthsAgo = (new \DateTime())->modify('-12 months')->format('Y-m-d H:i:s');
+    $filename = $status . '_players_' . date('Y-m-d_H-i-s') . '.csv';
 
+    header('Content-Type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename=' . $filename);
+    header('Pragma: no-cache');
+    header('Expires: 0');
 
-        $filename = $status . '_players_' . date('Y-m-d_H-i-s') . '.csv';
+    ini_set('memory_limit', '4096M');
+    set_time_limit(0);
 
+    $output = fopen('php://output', 'w');
+    fputcsv($output, ['MSISDN', 'Created At']); // CSV headers
 
-        header('Content-Type: text/csv; charset=UTF-8');
-        header('Content-Disposition: attachment; filename=' . $filename);
-        header('Pragma: no-cache');
-        header('Expires: 0');
+    $this->fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMonthsAgo, $twelveMonthsAgo, $output);
 
+    fclose($output);
+    exit;
+}
 
-        ini_set('memory_limit', '4096M');
-        set_time_limit(0);
+private function fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMonthsAgo, $twelveMonthsAgo, $output)
+{
+    $batchSize = 5000;
+    $offset = 0;
 
-        $output = fopen('php://output', 'w');
-        fputcsv($output, ['MSISDN', 'Created At']); // CSV headers
-
-
-        $this->fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMonthsAgo, $twelveMonthsAgo, $output);
-
-        fclose($output);
-        exit;
-    }
-
-    private function fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMonthsAgo, $twelveMonthsAgo, $output)
-    {
-        $batchSize = 5000;
-        $lastId = null;
-
-        $queries = [
-            'active' => [
-                'query' => "SELECT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :threeMonthsAgo AND :today AND id > :lastId ORDER BY id ASC LIMIT :batchSize",
-                'params' => [':threeMonthsAgo' => $threeMonthsAgo, ':today' => $today],
-                'db' => Yii::$app->mpesa_db,
-            ],
-            'inactive' => [
-                'query' => "SELECT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :sixMonthsAgo AND :threeMonthsAgo AND id > :lastId ORDER BY id ASC LIMIT :batchSize",
-                'params' => [':sixMonthsAgo' => $sixMonthsAgo, ':threeMonthsAgo' => $threeMonthsAgo],
-                'db' => Yii::$app->analytics_db,
-            ],
-            'dormant' => [
-                'query' => "SELECT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :twelveMonthsAgo AND :sixMonthsAgo AND id > :lastId ORDER BY id ASC LIMIT :batchSize",
-                'params' => [':twelveMonthsAgo' => $twelveMonthsAgo, ':sixMonthsAgo' => $sixMonthsAgo],
-                'db' => Yii::$app->analytics_db,
-                'filter' => function ($players, $analytics_db, $params) {
-                    // Fetch MSISDNs of players active in the last six months from both mpesa_db and analytics_db
-                    $playersInMpesaDb = Yii::$app->mpesa_db->createCommand("
+    $queries = [
+        'active' => [
+            'query' => "SELECT DISTINCT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :threeMonthsAgo AND :today LIMIT :batchSize OFFSET :offset",
+            'params' => [':threeMonthsAgo' => $threeMonthsAgo, ':today' => $today],
+            'db' => Yii::$app->mpesa_db,
+        ],
+        'inactive' => [
+            'query' => "SELECT DISTINCT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :sixMonthsAgo AND :threeMonthsAgo LIMIT :batchSize OFFSET :offset",
+            'params' => [':sixMonthsAgo' => $sixMonthsAgo, ':threeMonthsAgo' => $threeMonthsAgo],
+            'db' => Yii::$app->analytics_db,
+        ],
+        'dormant' => [
+            'query' => "SELECT DISTINCT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :twelveMonthsAgo AND :sixMonthsAgo LIMIT :batchSize OFFSET :offset",
+            'params' => [':twelveMonthsAgo' => $twelveMonthsAgo, ':sixMonthsAgo' => $sixMonthsAgo],
+            'db' => Yii::$app->analytics_db,
+            'filter' => function ($players, $analytics_db, $params) {
+                $playersInMpesaDb = Yii::$app->mpesa_db->createCommand("
                     SELECT DISTINCT MSISDN FROM mpesa_payments WHERE created_at >= :sixMonthsAgo
                 ")->bindValues([':sixMonthsAgo' => $params[':sixMonthsAgo']])
                     ->queryColumn();
 
-                    $playersInAnalyticsDb = $analytics_db->createCommand("
+                $playersInAnalyticsDb = $analytics_db->createCommand("
                     SELECT DISTINCT MSISDN FROM mpesa_payments WHERE created_at >= :sixMonthsAgo
                 ")->bindValues([':sixMonthsAgo' => $params[':sixMonthsAgo']])
                     ->queryColumn();
 
-                    // Combine active players from both databases
-                    $activePlayers = array_merge($playersInMpesaDb, $playersInAnalyticsDb);
+                $activePlayers = array_merge($playersInMpesaDb, $playersInAnalyticsDb);
 
-                    // Filter out players that were active in either database in the last six months
-                    return array_filter($players, fn($player) => !in_array($player['MSISDN'], $activePlayers));
-                },
-            ],
-        ];
+                return array_filter($players, fn($player) => !in_array($player['MSISDN'], $activePlayers));
+            },
+        ],
+    ];
 
-        if (!isset($queries[$status])) {
-            throw new \yii\web\BadRequestHttpException('Invalid player status.');
-        }
-
-        $query = $queries[$status];
-
-        while (true) {
-            $players = $query['db']->createCommand($query['query'])
-                ->bindValues($query['params'])
-                ->bindValue(':batchSize', $batchSize)
-                ->bindValue(':lastId', $lastId)
-                ->queryAll();
-
-            if (empty($players)) {
-                break;
-            }
-
-
-            if (isset($query['filter'])) {
-                $players = $query['filter']($players, Yii::$app->analytics_db, $query['params']);
-            }
-
-
-            foreach ($players as $player) {
-                fputcsv($output, $player);
-                $lastId = $player['id'];
-            }
-
-            flush();
-        }
+    if (!isset($queries[$status])) {
+        throw new \yii\web\BadRequestHttpException('Invalid player status.');
     }
+
+    $query = $queries[$status];
+
+    while (true) {
+        $players = $query['db']->createCommand($query['query'])
+            ->bindValues($query['params'])
+            ->bindValue(':batchSize', $batchSize)
+            ->bindValue(':offset', $offset)
+            ->queryAll();
+
+        if (empty($players)) {
+            break;
+        }
+
+        if (isset($query['filter'])) {
+            $players = $query['filter']($players, Yii::$app->analytics_db, $query['params']);
+        }
+
+        foreach ($players as $player) {
+            fputcsv($output, $player);
+        }
+
+        flush();
+        $offset += $batchSize;
+    }
+}
 }
