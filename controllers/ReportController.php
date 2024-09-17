@@ -1254,17 +1254,17 @@ private function fetchAndExportPlayers($status, $today, $threeMonthsAgo, $sixMon
 
     $queries = [
         'active' => [
-            'query' => "SELECT DISTINCT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :threeMonthsAgo AND :today LIMIT :batchSize OFFSET :offset",
+            'query' => "SELECT DISTINCT MSISDN FROM mpesa_payments WHERE created_at BETWEEN :threeMonthsAgo AND :today LIMIT :batchSize OFFSET :offset",
             'params' => [':threeMonthsAgo' => $threeMonthsAgo, ':today' => $today],
             'db' => Yii::$app->mpesa_db,
         ],
         'inactive' => [
-            'query' => "SELECT DISTINCT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :sixMonthsAgo AND :threeMonthsAgo LIMIT :batchSize OFFSET :offset",
+            'query' => "SELECT DISTINCT MSISDN FROM mpesa_payments WHERE created_at BETWEEN :sixMonthsAgo AND :threeMonthsAgo LIMIT :batchSize OFFSET :offset",
             'params' => [':sixMonthsAgo' => $sixMonthsAgo, ':threeMonthsAgo' => $threeMonthsAgo],
             'db' => Yii::$app->analytics_db,
         ],
         'dormant' => [
-            'query' => "SELECT DISTINCT MSISDN, created_at FROM mpesa_payments WHERE created_at BETWEEN :twelveMonthsAgo AND :sixMonthsAgo LIMIT :batchSize OFFSET :offset",
+            'query' => "SELECT DISTINCT MSISDN FROM mpesa_payments WHERE created_at BETWEEN :twelveMonthsAgo AND :sixMonthsAgo LIMIT :batchSize OFFSET :offset",
             'params' => [':twelveMonthsAgo' => $twelveMonthsAgo, ':sixMonthsAgo' => $sixMonthsAgo],
             'db' => Yii::$app->analytics_db,
             'filter' => function ($players, $analytics_db, $params) {
