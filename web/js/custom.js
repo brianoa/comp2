@@ -318,3 +318,13 @@ function growthTrendCharts() {
     });
   });
 }
+function showLoading(element) {
+  var value = parseFloat(element.textContent.replace(/[^0-9.-]+/g, ""));
+  if (value === 0 || isNaN(value)) {
+    element.innerHTML =
+      'Loading<span class="loading-dots"><span></span><span></span><span></span></span>';
+  }
+}
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".value-display").forEach(showLoading);
+});
