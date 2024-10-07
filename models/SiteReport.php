@@ -92,6 +92,34 @@ class SiteReport extends \yii\db\ActiveRecord
             }
         }
     }
+    public static function setTodayReport()
+    {
+        $ReportNames = ['today_payout'];
+        $stations = Stations::getActiveStations();
+        // SiteReport::deleteAll(false);
+        SiteReport::deleteAll(['report_name' => 'today_payout']);
+        for ($i = 0; $i < count($stations); $i++) {
+            $station = $stations[$i];
+            foreach ($ReportNames as $value) {
+                $sum = MpesaPayments::getMpesaCountsPerStation($value, $station->id);
+                try {
+                    $unique_field = $station->id . $value;
+                    $model = SiteReport::find()->where("unique_field = '$unique_field'")->one();
+                    if (!$model) {
+                        $model = new SiteReport();
+                    }
+                    $model->station_id = $station->id;
+                    $model->report_name = $value;
+                    $model->report_value = $sum;
+                    $model->unique_field = $unique_field;
+                    $model->report_date = date('Y-m-d H:i:s');
+                    $model->save(FALSE);
+                } catch (IntegrityException $e) {
+                    //do nothing
+                }
+            }
+        }
+    }
     /**
      * Method to get site report
      * @param type $reportName

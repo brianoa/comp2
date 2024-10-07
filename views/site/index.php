@@ -47,14 +47,14 @@ $this->registerCss("
             </div>
             <div class="col-md-3">
                 <div class="well well-lg text-white" style="background-color: #F64E60">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('last_7_days')) ?></h5>
+                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('last_7_days') + $today_income) ?></h5>
                     <p>Current Week</p>
                 </div>
 
             </div>
             <div class="col-md-3">
                 <div class="well well-lg text-white" style="background-color: #212121">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('currentmonth')) ?></h5>
+                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('currentmonth') + $today_income) ?></h5>
                     <p>Current month</p>
                 </div>
 
