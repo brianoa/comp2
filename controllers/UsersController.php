@@ -279,4 +279,15 @@ class UsersController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    public function actionSetPassword($id)
+    {
+        $model = $this->findModel($id);
+        if($model->load(Yii::$app->request->post()) ) {
+            $model->password = Yii::$app->security->generatePasswordHash($model->password);
+            $model->save(false);
+            Yii::$app->session->setFlash('success','Password was reset successfully!');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+        return $this->render('set_password', ['model' => $model]);
+    }
 }

@@ -52,7 +52,20 @@ $this->params['breadcrumbs'][] = $this->title;
             //'updated_at',
             //'created_by',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+            'template' => '{view} {update}{delete}{set-password}',
+            'buttons' => [
+                    'set-password' => function ($url, $model, $key) {
+                        return Html::a(
+                            '<span class="glyphicon glyphicon-lock"></span>', 
+                            ['users/set-password', 'id' => $model->id],
+                            [
+                                'title' => Yii::t('yii', 'Set Password'),
+                            ]
+                        );
+                    },
+                ],
+            ],
         ],
         'pjax'=>true,
         'showPageSummary'=>true,
