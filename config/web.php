@@ -9,8 +9,8 @@ $analytics_db = require __DIR__ . '/analytics_db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log','queue','analyticsqueue'],
-    'defaultRoute' =>'site/index',
+    'bootstrap' => ['log', 'queue', 'analyticsqueue'],
+    'defaultRoute' => 'site/index',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -41,7 +41,7 @@ $config = [
                 'host' => 'smtp.zoho.com',
                 'username' => EMAIL_FROM,
                 'password' => EMAIL_PASSWORD,
-                'port' => '587', 
+                'port' => '587',
                 'encryption' => 'tls',
             ],
         ],
@@ -56,7 +56,9 @@ $config = [
                     'class' => 'yii\log\EmailTarget',
                     'levels' => ['error'],
                     'except' => [
-                        'yii\web\HttpException:404', // Skip 404 errors
+                        'yii\web\HttpException:404', // Skip 404 errors                       
+                        'yii\web\HttpException:403', // Skip 403 errors
+                        'yii\web\HttpException:400', // Skip 400 errors
                     ],
                     'message' => [
                         'from' => [EMAIL_FROM => 'Codeshop'],
@@ -69,14 +71,14 @@ $config = [
         'db' => $db,
         'mpesa_db' => $mpesa_db,
         'sms_db' => $sms_db,
-        'analytics_db'=>$analytics_db,
+        'analytics_db' => $analytics_db,
         'queue' =>  [
             'class' => \yii\queue\db\Queue::class,
             'db' => $sms_db, // DB connection component or its config
             'tableName' => '{{%queue}}', // Table name
             'channel' => 'default', // Queue channel key
             'mutex' => [
-                'class'=>\yii\mutex\MysqlMutex::class, // Mutex used to sync queries
+                'class' => \yii\mutex\MysqlMutex::class, // Mutex used to sync queries
                 'db' => $sms_db // DB connection component or its config
             ],
             'ttr' => 43200,
@@ -93,21 +95,20 @@ $config = [
             'ttr' => 43200,
         ],
         'myhelper'        => [
-                'class' => 'app\components\Myhelper',
+            'class' => 'app\components\Myhelper',
         ],
-		'urlManager'      => [
+        'urlManager'      => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
-		],
+            'rules' => [],
+        ],
     ],
     'modules' => [
         'gridview' =>  [
             'class' => '\kartik\grid\Module',
             // your other grid module settings
         ],
-       'gridviewKrajee' =>  [
+        'gridviewKrajee' =>  [
             'class' => '\kartik\grid\Module',
             // your other grid module settings
         ]
