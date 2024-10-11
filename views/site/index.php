@@ -35,7 +35,7 @@ $this->registerCss("
         <div class="row">
             <div class="col-md-3">
                 <div class="well well-lg text-dark" style="background-color: #FFFFFF">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format($today_income); ?></h5>
+                    <h5 class="font-weight-bold"><?= $currency; ?> <?= number_format($today_income); ?></h5>
                     <p>Today</p>
                 </div>
             </div>
@@ -63,11 +63,11 @@ $this->registerCss("
         <div class="row">
             <div class="col-md-3">
                 <div class="well well-lg" style="background-color: #C9F7F5">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format($today_payout); ?></h5>
+                    <h5 class="font-weight-bold"><?= $currency; ?> <?= number_format($today_payout); ?></h5>
                     <p>Payouts today</p>
                 </div>
                 <div class="well well-lg" style="background-color: #FFE2E5">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format($yesterday_payout); ?></h5>
+                    <h5 class="font-weight-bold"><?= $currency; ?> <?= number_format($yesterday_payout); ?></h5>
                     <p>Payouts yesterday</p>
                 </div>
             </div>
@@ -108,11 +108,11 @@ $this->registerCss("
             </div>
             <div class="col-md-3">
                 <div class="well well-lg" style="background-color: #C9F7F5">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('lastweek')); ?></h5>
+                    <h5 class="font-weight-bold"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('lastweek')); ?></h5>
                     <p>Last week</p>
                 </div>
                 <div class="well well-lg" style="background-color: #FFE2E5">
-                    <h5 class="font-weight-bold value-display"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('lastmonth')); ?></h5>
+                    <h5 class="font-weight-bold"><?= $currency; ?> <?= number_format(app\models\SiteReport::getSiteReport('lastmonth')); ?></h5>
                     <p>Last month</p>
                 </div>
 
