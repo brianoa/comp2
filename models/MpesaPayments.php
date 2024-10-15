@@ -327,7 +327,8 @@ class MpesaPayments extends \yii\db\ActiveRecord
     public static function logRevenue($revenue_date)
     {
         $revenue_date = date("Y-m-d", strtotime($revenue_date));
-        $stations = Stations::find()->where("deleted_at is null")->orderBy("name asc")->all();
+        $stations = Stations::getActiveStations();
+        RevenueReport::deleteAll(['revenue_date' => $revenue_date]);
         for ($i = 0; $i < count($stations); $i++) {
             $row = $stations[$i];
             try {
