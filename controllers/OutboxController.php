@@ -59,10 +59,8 @@ class OutboxController extends Controller
         $searchModel = new OutboxSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', ['searchModel' => 
+        $searchModel,'dataProvider' => $dataProvider,]);
     }
 
     /**
@@ -111,6 +109,8 @@ class OutboxController extends Controller
      * @return mixed
      */
     public function actionCreate()
+
+    
     {
         $model = new Outbox();
         $model->id=Uuid::generate()->string;
@@ -239,7 +239,7 @@ class OutboxController extends Controller
         {
             return;
         }
-			$value = json_decode( $data);
+			$value = json_decode($data);
 			$sentSms = SentSms::findOne($value->message_id);
 			if($sentSms != NULL){
 				//if success delivered --> move to sentsms and delete it in outbox
@@ -248,10 +248,12 @@ class OutboxController extends Controller
                     $sentSms->save(FALSE);
                 }
                 // if not delivered and retry time is less 10min --> assign to pending for resend
-                if(in_array($value->status,[2,4,16]) && Myhelper::getTimeDiff($sentSms->created_date,date('Y-m-d H:i:s'),'minutes',true) < 10){
+                if(in_array($value->status,[2,4,16]) && Myhelper::getTimeDiff($sentSms->created_date,
+                date('Y-m-d H:i:s'),'minutes',true) < 10){
                     $sentSms->status=0;
                     $sentSms->save(FALSE);
                 }
+                
 			}
 	}
     public function actionTest($msisdn)
@@ -263,7 +265,7 @@ class OutboxController extends Controller
         var_dump($id."#".$msisdn."#".$message);
         //var_dump($res);
     }
-
+    
 
    public function actionGetdata($phone){
         $data=Outbox::find()->where(['receiver'=>$phone])->one();
@@ -271,9 +273,7 @@ class OutboxController extends Controller
         if(!empty($data)){
             $receiver=$data->receiver;
             $message=$data->message;
-
-           // var_dump($message);exit;
-
+            // var_dump($message);exit;
          
        
             $url='http://localhost:8888/sentsms/save?receiver='.$receiver.'&message='.urlencode($message);
@@ -331,17 +331,15 @@ class OutboxController extends Controller
 
     public function actionDit($id){
        $mod=new Outbox(); 
-       $delete=Outbox::find()->where(['id'=>$id])->one();
+       $delete=Outbox::find($id);
        if(!empty($mod)){
         $mod->delete();
         return "These records deleted successfully";
        }else{   
         return "no such record was deleted";
        }
-
-
-    
     }
+    
 
     ///CODE IN JSON FORMAT
 
@@ -353,19 +351,20 @@ class OutboxController extends Controller
         }
 
 
-        $datajsn = file_get_contents('php://input');
+        $datajsn = file_get_contents('php://input');       
         $data=json_decode($datajsn,true);
         //var_dump($data['id']);exit;
 
+        
+        
         if (!isset($data['id'])) {
             return ['status' => 'error','message' => 'ID is required in the request body',];
         }
 
         $id = $data['id'];
-        $model = Outbox::findOne($id);
-
-        if (!$model) {
-            return ['status' => 'error','message' => 'Record not found',];
+        $model = Outbox::findOne($id);      
+        if (!$model){
+            return ['status' => 'error','message' => 'Record not found'];            
         }
 
         if (isset($data['receiver'])) {
@@ -381,28 +380,32 @@ class OutboxController extends Controller
 
     }
 
+    
     //
-    public function actionUpdateoutboxdata(){
-       
+  public function actionUpdateoutboxdata(){
+       Yii::$app->response->format=\yii\web\Response::FORMAT_XML;
        $dataxml=file_get_contents('php://input');
        $xmldecode=simplexml_load_string($dataxml);
        
        $id=$xmldecode->id;
        $data=Outbox::findOne($id);
-       var_dump($data);exit;
+       //var_dump($data);exit;
 
        if(isset($xmldecode->receiver)){
             $data->receiver=$xmldecode->receiver;
        }
 
-       
+       if($data->save(false)){
+            return["status"=>"success","message"=>"The records have been updated sucessfully","data"=>$data->attributes];
+       }
+        return["status"=>"error","message"=>"The records have not updated sucessfully"];
       
         
     } 
 
 
-    //JSON FORMAT
-   public function actionDeleteoutbox(){
+
+ public function actionDeleteoutbox(){
        
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
        
@@ -425,10 +428,7 @@ class OutboxController extends Controller
         if (!$model) {
             return ['status' => 'error','message' => 'Record not found',];
         }
-    
-
        
-    
         if ($model->delete(false)) { 
             return ['status' => 'success','message' => 'Record Deleted successfully'];
         }
@@ -456,9 +456,7 @@ public function actionDeloutboxdata(){
         return ['status' => 'error','message' => 'ID is required in the request body'];
     }
 
-    
     $model = Outbox::findOne($id);
-
     if (!$model) {
         return ['status' => 'error','message' => 'Record not found'];
     }
@@ -472,12 +470,9 @@ public function actionDeloutboxdata(){
 
 }   
     
-        
-    
-    
-    
+  
 
-    public function beforeAction($action)
+public function beforeAction($action)
     {
         if (in_array($action->id, array('deloutboxdata','updateoutboxdata','newoutbox','updater','deleteoutbox','createoutboxdata'))) {
             $this->enableCsrfValidation = false;
@@ -486,9 +481,4 @@ public function actionDeloutboxdata(){
         return parent::beforeAction($action);
     }
 
-   
-    
-
-
-    
 }
