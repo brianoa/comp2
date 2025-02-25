@@ -267,7 +267,7 @@ class ReportController extends Controller
                 $end_date = date("Y-m-$d");
                 $response = RevenueReport::rangeGrowthTrendData($start_date, $end_date);
             }
-        } else {
+        } else {    
             $response = HourlyPerformanceReports::growthTrendData();
         }
 
@@ -638,6 +638,10 @@ class ReportController extends Controller
             $start_date = (isset($_GET['from']) && $_GET['from'] != '' ? $_GET['from'] : date("Y-m-d"));
             $end_date = (isset($_GET['to']) && $_GET['to'] != '' ? date('Y-m-d', strtotime($_GET['to'] . ' + 1 day')) : date("Y-m-d", strtotime("+1 day", time())));
         }
+
+
+
+
         $data = WinnerSummary::getAwardedSummary($start_date, $end_date);
         $total = 0;
         $count = count($data);
@@ -712,7 +716,8 @@ class ReportController extends Controller
             return '0' . $hr;
         } else {
             return $hr;
-        }
+        }       
+
     }
     public function actionDemo()
     {
@@ -731,7 +736,7 @@ class ReportController extends Controller
         } else if ($current_time >= 16 && $current_time < 24) {
             $start = 16;
             $end = 24;
-        }
+        }   
         for ($i = $start; $i < $end; $i++) {
             $i = $this->formatHour($i);
             $total_amount = 0;
@@ -895,7 +900,7 @@ class ReportController extends Controller
     public function actionFullmonth($month, $start, $end)
     {
         for ($i = $start; $i <= $end; $i++) {
-            $day = Myhelper::formatHour($i);
+            $day = Myhelper::formatHour($i); 
             $month = Myhelper::formatHour($month);
             $revenue_date = date("Y-$month-$day");
             MpesaPayments::logRevenue($revenue_date);
@@ -966,7 +971,7 @@ class ReportController extends Controller
     private function playerDataArchive($start_date, $end_date, $station_id)
     {
         $archive = ArchivedTransactionHistories::getUniquePlayers($start_date, $end_date, $station_id);
-        $filename = SENDER_NAME . "archive" . ".csv";
+        $filename = SENDER_NAME . "archive" . ".csv"; 
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=' . $filename);
         $output = fopen('php://output', 'w');
@@ -1015,7 +1020,7 @@ class ReportController extends Controller
             $start++;
         }
     }
-    public function actionMerge($file1, $file2, $file3)
+    public function actionMrge($file1, $file2, $file3)
     {
         ini_set('memory_limit', '1024M');
         $file1 = "/mnt/c/Users/Cesay/Downloads/dbs/" . $file1 . ".csv";
@@ -1247,4 +1252,133 @@ class ReportController extends Controller
             $offset += $batchSize;
         }
     }
+
+    public function actionClassmedia($file1, $file2, $file3)
+    {
+        ini_set('memory_limit', '1024M');
+        $file1 = "/mnt/c/Users/nadia/Downloads/dbs/" . $file1 . ".csv";
+        $file2 = "/mnt/c/Users/nadia/Downloads/dbs/" . $file2 . ".csv";
+        $handle = fopen($file1, "r");
+        $seen = [];
+        $final = [];
+        $filename = $file3 . date("Ymd") . ".csv";
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+        $output = fopen('php://output', 'w');
+        ob_start();
+    
+        while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+            $unique_field = '';
+            if (isset($row[0])) {
+                $unique_field .= trim($row[0]);
+            }
+            if (isset($row[1])) {
+                $unique_field .= trim($row[1]);
+            }
+            if (isset($row[2])) {
+                $unique_field .= trim($row[2]);
+            }
+    
+            $new = [
+                isset($row[0]) ? $row[0] : '0',
+                isset($row[1]) ? $row[1] : '0',
+                isset($row[2]) ? $row[2] : '0',
+                $unique_field
+            ];
+    
+            array_push($final, $new);
+    
+            $arr = [
+                isset($row[0]) ? $row[0] : '0',
+                isset($row[1]) ? $row[1] : '0',
+                isset($row[2]) ? $row[2] : '0'
+            ];
+            fputcsv($output, $arr);
+            $seen[] = $unique_field;
+        }
+    
+        fclose($handle);
+    
+        $handle1 = fopen($file2, "r");
+        while (($row = fgetcsv($handle1, 1000, ",")) !== false) {
+            $unique_field = '';
+            if (isset($row[0])) {
+                $unique_field .= trim($row[0]);
+            }
+            if (isset($row[1])) {
+                $unique_field .= trim($row[1]);
+            }
+            if (isset($row[2])) {
+                $unique_field .= trim($row[2]);
+            }
+    
+            $new = [
+                isset($row[0]) ? $row[0] : '0',
+                isset($row[1]) ? $row[1] : '0',
+                isset($row[2]) ? $row[2] : '0',
+                $unique_field
+            ];
+    
+            array_push($final, $new);
+    
+            $arr = [
+                isset($row[0]) ? $row[0] : '0',
+                isset($row[1]) ? $row[1] : '0',
+                isset($row[2]) ? $row[2] : '0'
+            ];
+            fputcsv($output, $arr);
+            $seen[] = $unique_field;
+        }
+    
+        fclose($handle1);
+    
+        Yii::$app->end();
+        return ob_get_clean();
+    }
+
+
+    public function actionMerge($file1, $file2, $file3)
+    {
+        $file1 = "/mnt/c/Users/omaeb/Downloads/dbs/" . $file1 . ".csv";
+        $file2 = "/mnt/c/Users/omaeb/Downloads/dbs/" . $file2 . ".csv";
+        $handle = fopen($file1, "r");
+        $seen = [];
+        $final = [];
+        $filename = $file3 . date("Ymd") . ".csv";
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+        $output = fopen('php://output', 'w');
+        ob_start();
+        while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+            $unique_field = trim($row[0]) . trim($row[1]) . trim($row[2]);
+            $new = [];
+            if (!in_array($unique_field, $seen)) {
+                $new = [$row[0], $row[1], $row[2], $unique_field];
+                array_push($final, $new);
+                $arr = [];
+                array_push($arr, $row[0]);
+                array_push($arr, $row[1]);
+                array_push($arr, $row[2]);
+                fputcsv($output, $arr);
+            }
+        }
+        $handle1 = fopen($file2, "r");
+        while (($row = fgetcsv($handle1, 1000, ",")) !== false) {
+            $unique_field = trim($row[0]) . trim($row[1]) . trim($row[2]);
+            $new = [];
+            if (!in_array($unique_field, $seen)) {
+                $new = [$row[0], $row[1], $row[2], $unique_field];
+                array_push($final, $new);
+                $arr = [];
+                array_push($arr, $row[0]);
+                array_push($arr, $row[1]);
+                array_push($arr, $row[2]);
+                fputcsv($output, $arr);
+            }
+        }
+        Yii::$app->end();
+        return ob_get_clean();
+    }
+
+
 }
