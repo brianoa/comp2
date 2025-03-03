@@ -1256,8 +1256,8 @@ class ReportController extends Controller
     public function actionClassmedia($file1, $file2, $file3)
     {
         ini_set('memory_limit', '1024M');
-        $file1 = "/mnt/c/Users/nadia/Downloads/dbs/" . $file1 . ".csv";
-        $file2 = "/mnt/c/Users/nadia/Downloads/dbs/" . $file2 . ".csv";
+        $file1 = "C:\Users\omaeb\Downloads\dbs" . $file1 . ".csv";
+        $file2 = "C:\Users\omaeb\Downloads\dbs" . $file2 . ".csv";
         $handle = fopen($file1, "r");
         $seen = [];
         $final = [];
@@ -1339,8 +1339,10 @@ class ReportController extends Controller
 
     public function actionMerge($file1, $file2, $file3)
     {
-        $file1 = "/mnt/c/Users/omaeb/Downloads/dbs/" . $file1 . ".csv";
-        $file2 = "/mnt/c/Users/omaeb/Downloads/dbs/" . $file2 . ".csv";
+        ini_set('memory_limit', '1024M');
+        $file1 = "C:\Users\omaeb\Downloads\dbs\\" . $file1 . ".csv";
+        $file2 = "C:\Users\omaeb\Downloads\dbs\\" . $file2 . ".csv";
+
         $handle = fopen($file1, "r");
         $seen = [];
         $final = [];
